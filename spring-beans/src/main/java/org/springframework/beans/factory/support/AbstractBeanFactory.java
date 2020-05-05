@@ -246,6 +246,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 		Object bean;
 
 		// Eagerly check singleton cache for manually registered singletons.
+		// 首次getSingleton()获得的Object=null
 		Object sharedInstance = getSingleton(beanName);
 		if (sharedInstance != null && args == null) {
 			if (logger.isTraceEnabled()) {
@@ -269,6 +270,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 
 			// Check if bean definition exists in this factory.
 			BeanFactory parentBeanFactory = getParentBeanFactory();
+			// containsBeanDefinition(beanName)=false 说明此BeanFactory中找不到bean的定义,只能去父BeanFactory去找
 			if (parentBeanFactory != null && !containsBeanDefinition(beanName)) {
 				// Not found -> check parent.
 				String nameToLookup = originalBeanName(name);
@@ -290,14 +292,17 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 			}
 
 			if (!typeCheckOnly) {
+				// 记录此beanName已经被创建
 				markBeanAsCreated(beanName);
 			}
 
 			try {
+				// 合并父类中的方法及属性
 				final RootBeanDefinition mbd = getMergedLocalBeanDefinition(beanName);
+				// 检查这个bean是否为抽象类
 				checkMergedBeanDefinition(mbd, beanName, args);
 
-				// Guarantee initialization of beans that the current bean depends on.
+				// 这里是为了保证获取的bean的依赖都需要先生成
 				String[] dependsOn = mbd.getDependsOn();
 				if (dependsOn != null) {
 					for (String dep : dependsOn) {
@@ -330,6 +335,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 							throw ex;
 						}
 					});
+					// 当bean类型是FactoryBean时,通过FactoryBean的getObject()获取真正要返回的bean
 					bean = getObjectForBeanInstance(sharedInstance, name, beanName, mbd);
 				}
 

@@ -62,6 +62,10 @@ import org.springframework.lang.Nullable;
  * @see org.springframework.aop.framework.ProxyFactoryBean
  * @see org.springframework.jndi.JndiObjectFactoryBean
  */
+// 当在IOC容器中的Bean实现了FactoryBean后,
+// 通过getBean(String BeanName)获取到的Bean对象并不是FactoryBean的实现类对象,
+// 而是这个实现类中的getObject()方法返回的对象
+// 要想获取FactoryBean的实现类，就要getBean(&BeanName)，在BeanName之前加上&。
 public interface FactoryBean<T> {
 
 	/**

@@ -177,15 +177,21 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 	 * @return the registered singleton object, or {@code null} if none found
 	 */
 	@Nullable
+	// 解决setter()中循环依赖的问题
 	protected Object getSingleton(String beanName, boolean allowEarlyReference) {
+		// 一级缓存
 		Object singletonObject = this.singletonObjects.get(beanName);
 		if (singletonObject == null && isSingletonCurrentlyInCreation(beanName)) {
 			synchronized (this.singletonObjects) {
+				// 二级缓存(提前曝光的单例对象的缓存)
 				singletonObject = this.earlySingletonObjects.get(beanName);
+				// allowEarlyReference:是否允许从singletonFactories中通过getObject拿到对象
 				if (singletonObject == null && allowEarlyReference) {
+					// 三级缓存(单例对象工厂的缓存)
 					ObjectFactory<?> singletonFactory = this.singletonFactories.get(beanName);
 					if (singletonFactory != null) {
 						singletonObject = singletonFactory.getObject();
+						// 将单例对象从三级缓存转移到二级缓存
 						this.earlySingletonObjects.put(beanName, singletonObject);
 						this.singletonFactories.remove(beanName);
 					}
