@@ -556,6 +556,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 			instanceWrapper = this.factoryBeanInstanceCache.remove(beanName);
 		}
 		if (instanceWrapper == null) {
+			// 调用构造方法实例化一个bean的包装类
 			instanceWrapper = createBeanInstance(beanName, mbd, args);
 		}
 		final Object bean = instanceWrapper.getWrappedInstance();
@@ -568,6 +569,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		synchronized (mbd.postProcessingLock) {
 			if (!mbd.postProcessed) {
 				try {
+					// 解析@Resource和@Autowired注解的信息,将解析出来的信息放入到beanDefinition中
 					applyMergedBeanDefinitionPostProcessors(mbd, beanType, beanName);
 				}
 				catch (Throwable ex) {
@@ -578,8 +580,9 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 			}
 		}
 
-		// Eagerly cache singletons to be able to resolve circular references
-		// even when triggered by lifecycle interfaces like BeanFactoryAware.
+		// 当bean是单例,allowCircularReferences(允许循环依赖)=true且此单例被标记为正在创建时,
+		// 将earlySingletonExposure置为true
+		// 其中isSingleton()和isSingletonCurrentlyInCreation(),在绝大多数情况下,总是为true
 		boolean earlySingletonExposure = (mbd.isSingleton() && this.allowCircularReferences &&
 				isSingletonCurrentlyInCreation(beanName));
 		if (earlySingletonExposure) {
@@ -587,14 +590,15 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 				logger.trace("Eagerly caching bean '" + beanName +
 						"' to allow for resolving potential circular references");
 			}
-			// 为避免后期循环依赖，可以在Bean初始化完成前将创建实例的ObjectFactory加入工厂
+			// 为避免后期循环依赖，可以在Bean初始化完成前将创建实例的ObjectFactory加入工厂,
+			// 将未完成初始化的bean提前曝光,这里是解决循环依赖的关键点
 			addSingletonFactory(beanName, () -> getEarlyBeanReference(beanName, mbd, bean));
 		}
 
 		// Initialize the bean instance.
 		Object exposedObject = bean;
 		try {
-			// 给bean的属性赋值
+			// 给bean的属性赋值(自动注入)
 			populateBean(beanName, mbd, instanceWrapper);
 			// 初始化bean,调用bean的init方法和遍历所有bean的postProcessors
 			exposedObject = initializeBean(beanName, exposedObject, mbd);
@@ -612,6 +616,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		if (earlySingletonExposure) {
 			Object earlySingletonReference = getSingleton(beanName, false);
 			if (earlySingletonReference != null) {
+				// 对于循环依赖中,涉及到aop代理的,此处将bean替换成aop的代理对象(代理对象从earlySingletonObjects缓存中取出)
 				if (exposedObject == bean) {
 					exposedObject = earlySingletonReference;
 				}
@@ -1423,6 +1428,8 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 			if (pvs == null) {
 				pvs = mbd.getPropertyValues();
 			}
+			// CommonAnnotationBeanPostProcessor处理@Resource注解的自动注入
+			// AutowiredAnnotationBeanPostProcessor处理@Autowired注解的自动注入
 			for (BeanPostProcessor bp : getBeanPostProcessors()) {
 				if (bp instanceof InstantiationAwareBeanPostProcessor) {
 					InstantiationAwareBeanPostProcessor ibp = (InstantiationAwareBeanPostProcessor) bp;

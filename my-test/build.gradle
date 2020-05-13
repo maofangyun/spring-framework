@@ -15,5 +15,6 @@ dependencies {
     compile(project(":spring-context-support"))
     compile(project(":spring-core"))
     compile(project(":spring-aop"))
+    compile(project(":spring-aspects"))
     testCompile group: 'junit', name: 'junit', version: '4.12'
 }
