@@ -518,20 +518,22 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 			// Prepare this context for refreshing.
 			prepareRefresh();
 
-			// Tell the subclass to refresh the internal bean factory.
+			// 获取BeanFactory,其实是DefaultListableBeanFactory
 			ConfigurableListableBeanFactory beanFactory = obtainFreshBeanFactory();
 
-			// Prepare the bean factory for use in this context.
+			// 设置BeanFactory的类加载器，添加几个BeanPostProcessor，手动注册几个特殊的 bean
 			prepareBeanFactory(beanFactory);
 
 			try {
 				// Allows post-processing of the bean factory in context subclasses.
+				// 扩展点
 				postProcessBeanFactory(beanFactory);
 
-				// Invoke factory processors registered as beans in the context.
+				// 实例化BeanFactoryPostProcessor(new应用上下文的时候注册的beanDefinition)并调用,作用是修改beanDefinition的信息
+				// 例如internalConfigurationAnnotationProcessor,用来解析@Configuration注解类管辖的beanDefinition信息
 				invokeBeanFactoryPostProcessors(beanFactory);
 
-				// Register bean processors that intercept bean creation.
+				// 实例化各种BeanPostProcessors,并注册到beanFactory中
 				registerBeanPostProcessors(beanFactory);
 
 				// Initialize message source for this context.
@@ -703,6 +705,13 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	 * <p>Must be called before singleton instantiation.
 	 */
 	protected void invokeBeanFactoryPostProcessors(ConfigurableListableBeanFactory beanFactory) {
+		// getBeanFactoryPostProcessors()获取的是手动调用addBeanFactoryPostProcessor()加进来的
+		// 例如
+		//	@Override
+		//	public void initialize(ConfigurableApplicationContext context) {
+		//		context.addBeanFactoryPostProcessor(
+		//			new ConfigurationWarningsPostProcessor(getChecks()));
+		//	}
 		PostProcessorRegistrationDelegate.invokeBeanFactoryPostProcessors(beanFactory, getBeanFactoryPostProcessors());
 
 		// Detect a LoadTimeWeaver and prepare for weaving, if found in the meantime
