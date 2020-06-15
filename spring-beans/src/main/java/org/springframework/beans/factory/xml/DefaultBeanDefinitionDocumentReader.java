@@ -144,8 +144,9 @@ public class DefaultBeanDefinitionDocumentReader implements BeanDefinitionDocume
 				}
 			}
 		}
-
+		// 又一个模板设计方式
 		preProcessXml(root);
+		// this.delegate=BeanDefinitionParserDelegate
 		parseBeanDefinitions(root, this.delegate);
 		postProcessXml(root);
 
@@ -173,9 +174,11 @@ public class DefaultBeanDefinitionDocumentReader implements BeanDefinitionDocume
 				if (node instanceof Element) {
 					Element ele = (Element) node;
 					if (delegate.isDefaultNamespace(ele)) {
+						// 解析默认标签 例如<beans/> <import/>
 						parseDefaultElement(ele, delegate);
 					}
 					else {
+						// 采用委托设计模式解析自定义标签(标签有前缀的) 例如<context:component-scan/>
 						delegate.parseCustomElement(ele);
 					}
 				}
