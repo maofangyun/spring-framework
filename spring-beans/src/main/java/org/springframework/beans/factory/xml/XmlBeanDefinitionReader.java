@@ -510,6 +510,9 @@ public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
 		BeanDefinitionDocumentReader documentReader = createBeanDefinitionDocumentReader();
 		// getRegistry()获取BeanDefinitionRegistry实现类
 		int countBefore = getRegistry().getBeanDefinitionCount();
+		// createReaderContext()中在实例化XmlReaderContext时,会实例化一个DefaultNamespaceHandlerResolver,
+		// DefaultNamespaceHandlerResolver在实例化时,默认会传入"META-INF/spring.handlers"路径,
+		// 将会解析所有spring的jar包里此路径下的映射关系,并传入handlerMappings属性中保存
 		documentReader.registerBeanDefinitions(doc, createReaderContext(resource));
 		return getRegistry().getBeanDefinitionCount() - countBefore;
 	}
@@ -550,7 +553,8 @@ public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
 	 */
 	protected NamespaceHandlerResolver createDefaultNamespaceHandlerResolver() {
 		ClassLoader cl = (getResourceLoader() != null ? getResourceLoader().getClassLoader() : getBeanClassLoader());
-		return new DefaultNamespaceHandlerResolver(cl);
+		DefaultNamespaceHandlerResolver defaultNamespaceHandlerResolver = new DefaultNamespaceHandlerResolver(cl);
+		return defaultNamespaceHandlerResolver;
 	}
 
 }

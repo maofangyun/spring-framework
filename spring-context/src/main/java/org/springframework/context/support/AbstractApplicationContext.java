@@ -521,7 +521,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 			// 获取BeanFactory,其实是DefaultListableBeanFactory
 			ConfigurableListableBeanFactory beanFactory = obtainFreshBeanFactory();
 
-			// 设置BeanFactory的类加载器，添加几个BeanPostProcessor，手动注册几个特殊的 bean
+			// 设置BeanFactory的类加载器，添加几个BeanPostProcessor，手动注册几个特殊的bean
 			prepareBeanFactory(beanFactory);
 
 			try {
