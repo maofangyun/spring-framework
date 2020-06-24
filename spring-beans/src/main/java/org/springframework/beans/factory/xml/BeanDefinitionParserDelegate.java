@@ -241,6 +241,7 @@ public class BeanDefinitionParserDelegate {
 	private final Set<String> usedNames = new HashSet<>();
 
 
+
 	/**
 	 * Create a new BeanDefinitionParserDelegate associated with the supplied
 	 * {@link XmlReaderContext}.
@@ -249,7 +250,6 @@ public class BeanDefinitionParserDelegate {
 		Assert.notNull(readerContext, "XmlReaderContext must not be null");
 		this.readerContext = readerContext;
 	}
-
 
 	/**
 	 * Get the {@link XmlReaderContext} associated with this helper instance.
@@ -507,6 +507,7 @@ public class BeanDefinitionParserDelegate {
 			className = ele.getAttribute(CLASS_ATTRIBUTE).trim();
 		}
 		String parent = null;
+		// 解析<bean>标签的parent属性,为后面merge父子beanDefinition做准备
 		if (ele.hasAttribute(PARENT_ATTRIBUTE)) {
 			parent = ele.getAttribute(PARENT_ATTRIBUTE);
 		}
@@ -514,14 +515,20 @@ public class BeanDefinitionParserDelegate {
 		try {
 			AbstractBeanDefinition bd = createBeanDefinition(className, parent);
 
+			// 解析<bean>标签的子标签数据,并填充到beanDefinition中
 			parseBeanDefinitionAttributes(ele, beanName, containingBean, bd);
 			bd.setDescription(DomUtils.getChildElementValueByTagName(ele, DESCRIPTION_ELEMENT));
 
+			// 解析<meta>标签,放入beanDefinition的attributes属性中
 			parseMetaElements(ele, bd);
+			// 解析<lookup-method>,用于向单例中添加一个原型的属性
 			parseLookupOverrideSubElements(ele, bd.getMethodOverrides());
+			// 解析<replaced-method>,用于在不修改源代码的基础上,扩展功能,符合软件的开闭原则
 			parseReplacedMethodSubElements(ele, bd.getMethodOverrides());
 
+			// 解析<constructor-arg>标签,并放入beanDefinition的constructorArgumentValues属性中
 			parseConstructorArgElements(ele, bd);
+			// 解析<property>标签,并放入beanDefinition的propertyValues属性中
 			parsePropertyElements(ele, bd);
 			parseQualifierElements(ele, bd);
 
@@ -585,6 +592,7 @@ public class BeanDefinitionParserDelegate {
 			bd.setDependsOn(StringUtils.tokenizeToStringArray(dependsOn, MULTI_VALUE_ATTRIBUTE_DELIMITERS));
 		}
 
+		// AUTOWIRE_CANDIDATE_ATTRIBUTE默认为true,表明bean同意自动装配
 		String autowireCandidate = ele.getAttribute(AUTOWIRE_CANDIDATE_ATTRIBUTE);
 		if (isDefaultValue(autowireCandidate)) {
 			String candidatePattern = this.defaults.getAutowireCandidates();
@@ -1383,11 +1391,14 @@ public class BeanDefinitionParserDelegate {
 		if (namespaceUri == null) {
 			return null;
 		}
+		// 根据namespaceUri从handlerMappings中获取NamespaceHandler,若没有,则创建并放入handlerMappings
+		// 例如namespaceUri = http://www.springframework.org/schema/context
 		NamespaceHandler handler = this.readerContext.getNamespaceHandlerResolver().resolve(namespaceUri);
 		if (handler == null) {
 			error("Unable to locate Spring NamespaceHandler for XML schema namespace [" + namespaceUri + "]", ele);
 			return null;
 		}
+		// 解析的整个过程,都委托给了ComponentBeanDefinitionParser的parse()
 		return handler.parse(ele, new ParserContext(this.readerContext, this, containingBd));
 	}
 

@@ -1,6 +1,9 @@
 package com.mfy.test.bean;
 
-//@Scope(scopeName = "jack",proxyMode = ScopedProxyMode.TARGET_CLASS)
+import org.springframework.context.annotation.Scope;
+import org.springframework.context.annotation.ScopedProxyMode;
+
+@Scope(scopeName = "jack",proxyMode = ScopedProxyMode.INTERFACES)
 public class Woman implements People {
     @Override
     public void showsix() {

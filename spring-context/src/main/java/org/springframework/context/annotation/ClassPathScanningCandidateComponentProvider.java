@@ -203,6 +203,7 @@ public class ClassPathScanningCandidateComponentProvider implements EnvironmentC
 	 */
 	@SuppressWarnings("unchecked")
 	protected void registerDefaultFilters() {
+		// 此处将Component注入,用于后面的识别
 		this.includeFilters.add(new AnnotationTypeFilter(Component.class));
 		ClassLoader cl = ClassPathScanningCandidateComponentProvider.class.getClassLoader();
 		try {
@@ -426,7 +427,9 @@ public class ClassPathScanningCandidateComponentProvider implements EnvironmentC
 				}
 				if (resource.isReadable()) {
 					try {
+						// metadataReader包含了此类的所有信息(其实就三个方法,分别获取类的Resource,ClassMetadata和AnnotationMetadata)
 						MetadataReader metadataReader = getMetadataReaderFactory().getMetadataReader(resource);
+						// 筛选出符合条件(有@Component注解,不在excludeFilters中,同时在includeFilters中)的bean,生成对应的BeanDefinition
 						if (isCandidateComponent(metadataReader)) {
 							ScannedGenericBeanDefinition sbd = new ScannedGenericBeanDefinition(metadataReader);
 							sbd.setSource(resource);

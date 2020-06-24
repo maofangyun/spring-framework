@@ -10,16 +10,18 @@
     http://www.springframework.org/schema/context
     http://www.springframework.org/schema/context/spring-context.xsd"
     default-lazy-init="false">
+	<beans default-autowire="no">
 
     <!--<import resource="spring-jdbc.xml"/>-->
     <!--@Service @Component @Controller 如果不配做这个自定义标签，就不认识注解-->
-    <context:component-scan base-package="com.mfy.test"></context:component-scan>
+    <context:component-scan base-package="com.mfy.test" scoped-proxy="interfaces"></context:component-scan>
     <!--这两个beanDefinition会在实例化过程中合并成一个-->
     <bean id="parent" class="com.mfy.test.bean.Parent" abstract="true">
         <property name="username" value="parent name"/>
     </bean>
     <bean id="son" class="com.mfy.test.bean.Son" parent="parent">
         <!--<property name="username" value="son name"/>-->
+		<meta key="name" value="zhangsan"/>
         <property name="age" value="18"/>
     </bean>
 
@@ -39,7 +41,7 @@
 
 
     <bean id="people" class="com.mfy.test.bean.ShowSixClass">
-        <!--<lookup-method name="getPeople" bean="woman"></lookup-method>-->
+        <lookup-method name="getPeople" bean="woman"/>
     </bean>
 
 
@@ -70,5 +72,5 @@
 
     <bean id="businessObject" class="org.springframework.aop.framework.ProxyFactoryBean">
     </bean>
-
+	</beans>
 </beans>

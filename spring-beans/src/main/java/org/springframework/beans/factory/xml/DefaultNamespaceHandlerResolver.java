@@ -69,8 +69,8 @@ public class DefaultNamespaceHandlerResolver implements NamespaceHandlerResolver
 	@Nullable
 	private volatile Map<String, Object> handlerMappings;
 
-
 	/**
+
 	 * Create a new {@code DefaultNamespaceHandlerResolver} using the
 	 * default mapping file location.
 	 * <p>This constructor will result in the thread context ClassLoader being used
@@ -132,6 +132,7 @@ public class DefaultNamespaceHandlerResolver implements NamespaceHandlerResolver
 							"] does not implement the [" + NamespaceHandler.class.getName() + "] interface");
 				}
 				NamespaceHandler namespaceHandler = (NamespaceHandler) BeanUtils.instantiateClass(handlerClass);
+				// 非常重要的方法,给NamespaceHandler添加各种解析用的组件,会存放到parsers中
 				namespaceHandler.init();
 				handlerMappings.put(namespaceUri, namespaceHandler);
 				return namespaceHandler;
