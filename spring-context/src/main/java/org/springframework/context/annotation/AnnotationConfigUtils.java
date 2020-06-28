@@ -214,7 +214,7 @@ public abstract class AnnotationConfigUtils {
 
 	private static BeanDefinitionHolder registerPostProcessor(
 			BeanDefinitionRegistry registry, RootBeanDefinition definition, String beanName) {
-
+		// role = 2 表明这个beanDefinition是spring内部使用的
 		definition.setRole(BeanDefinition.ROLE_INFRASTRUCTURE);
 		// BeanDefinition信息存储到BeanFactory的beanDefinitionMap
 		registry.registerBeanDefinition(beanName, definition);

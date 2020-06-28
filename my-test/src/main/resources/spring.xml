@@ -33,9 +33,10 @@
     <bean id="initMethodBean" class="com.mfy.test.bean.InitMethodBean" init-method="initMethod"/>
 
     <!--init-method="initMehtod" destroy-method="destroyMethod"-->
-    <bean class="com.mfy.test.bean.PropertyClass" id="propertyClass"
-
-          factory-bean="factoryBean" factory-method="factoryMethod"/>
+    <bean class="com.mfy.test.bean.PropertyClass" id="propertyClass" factory-bean="factoryBean" factory-method="factoryMethod">
+		<constructor-arg name="id" value="name"/>
+		<constructor-arg name="son" ref="son"/>
+	</bean>
 
     <bean id="woman" class="com.mfy.test.bean.Woman" lazy-init="false"></bean>
 
