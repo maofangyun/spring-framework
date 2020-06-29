@@ -305,7 +305,8 @@ public class DefaultBeanDefinitionDocumentReader implements BeanDefinitionDocume
 	protected void processBeanDefinition(Element ele, BeanDefinitionParserDelegate delegate) {
 		BeanDefinitionHolder bdHolder = delegate.parseBeanDefinitionElement(ele);
 		if (bdHolder != null) {
-			// 装饰者设计模式,对bdHolder进行增强
+			// 装饰者设计模式,对bdHolder进行增强,例如针对如下的<bean/>标签
+			// <bean class="com.mfy.test.bean.DecoratorBean" id="decoratorBean" p:username="Jack" p:password="123" c:age="12" c:sex="1"/>
 			bdHolder = delegate.decorateBeanDefinitionIfRequired(ele, bdHolder);
 			try {
 				// Register the final decorated instance.

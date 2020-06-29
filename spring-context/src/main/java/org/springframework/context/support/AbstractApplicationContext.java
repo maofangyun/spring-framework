@@ -707,7 +707,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	 */
 	protected void invokeBeanFactoryPostProcessors(ConfigurableListableBeanFactory beanFactory) {
 		// getBeanFactoryPostProcessors()获取的是手动调用addBeanFactoryPostProcessor()加进来的
-		// 例如
+		// 例如实现了ApplicationContextInitializer接口的initialize()方法
 		//	@Override
 		//	public void initialize(ConfigurableApplicationContext context) {
 		//		context.addBeanFactoryPostProcessor(

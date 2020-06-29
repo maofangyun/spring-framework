@@ -86,9 +86,11 @@ public class ComponentScanBeanDefinitionParser implements BeanDefinitionParser {
 				ConfigurableApplicationContext.CONFIG_LOCATION_DELIMITERS);
 
 		// 真正的扫描并注册beanDefinition,委托给了ClassPathBeanDefinitionScanner
-		// scanner存储了context:component-scan/>标签的属性信息
+		// scanner存储了<context:component-scan/>标签的属性信息
 		ClassPathBeanDefinitionScanner scanner = configureScanner(parserContext, element);
 		Set<BeanDefinitionHolder> beanDefinitions = scanner.doScan(basePackages);
+		// 向BeanFactory中注册一些组件,用来解析处理@Configuration,@Autowired,@Resource,@PostConstruct,@PreDestroy等等注解
+		// 这些组件都是实现了BeanPostProcessor接口
 		registerComponents(parserContext.getReaderContext(), beanDefinitions, element);
 
 		return null;
