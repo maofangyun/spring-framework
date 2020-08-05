@@ -533,7 +533,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 				// 例如internalConfigurationAnnotationProcessor,用来解析@Configuration注解类管辖的beanDefinition信息
 				invokeBeanFactoryPostProcessors(beanFactory);
 
-				// 实例化各种BeanPostProcessors,并注册到beanFactory中
+				// 实例化各种BeanPostProcessors,并注册到beanFactory的beanPostProcessors属性中
 				registerBeanPostProcessors(beanFactory);
 
 				// Initialize message source for this context.

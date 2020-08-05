@@ -93,6 +93,7 @@ final class PostProcessorRegistrationDelegate {
 			}
 			sortPostProcessors(currentRegistryProcessors, beanFactory);
 			registryProcessors.addAll(currentRegistryProcessors);
+			// 目前是调用ConfigurationClassPostProcessor,解析“配置类”的包含的bean信息，变成beanDefinition存入map中
 			invokeBeanDefinitionRegistryPostProcessors(currentRegistryProcessors, registry);
 			currentRegistryProcessors.clear();
 
@@ -109,7 +110,7 @@ final class PostProcessorRegistrationDelegate {
 			invokeBeanDefinitionRegistryPostProcessors(currentRegistryProcessors, registry);
 			currentRegistryProcessors.clear();
 
-			// Finally, invoke all other BeanDefinitionRegistryPostProcessors until no further ones appear.
+
 			// 死循环获取其他所有的BeanDefinitionRegistryPostProcessor实现类,排序之后,按顺序调用
 			boolean reiterate = true;
 			while (reiterate) {

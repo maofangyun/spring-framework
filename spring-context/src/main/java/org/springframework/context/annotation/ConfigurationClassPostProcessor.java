@@ -232,7 +232,7 @@ public class ConfigurationClassPostProcessor implements BeanDefinitionRegistryPo
 					"postProcessBeanFactory already called on this post-processor against " + registry);
 		}
 		this.registriesPostProcessed.add(registryId);
-		// 解析@Configuration注解
+		// 解析@Component,@ComponentScan,@Import,@ImportResource注解
 		processConfigBeanDefinitions(registry);
 	}
 
@@ -253,7 +253,7 @@ public class ConfigurationClassPostProcessor implements BeanDefinitionRegistryPo
 			// Simply call processConfigurationClasses lazily at this point then.
 			processConfigBeanDefinitions((BeanDefinitionRegistry) beanFactory);
 		}
-
+		// 生成@Configuration注解的类的代理类的BeanDefinition，并加入beanDefinitionMap
 		enhanceConfigurationClasses(beanFactory);
 		beanFactory.addBeanPostProcessor(new ImportAwareBeanPostProcessor(beanFactory));
 	}
@@ -266,7 +266,7 @@ public class ConfigurationClassPostProcessor implements BeanDefinitionRegistryPo
 		List<BeanDefinitionHolder> configCandidates = new ArrayList<>();
 		String[] candidateNames = registry.getBeanDefinitionNames();
 
-		// 筛选具有@Configuration注解信息的BeanDefinition
+		// 筛选具有@Component,@ComponentScan,@Import,@ImportResource注解信息的BeanDefinition
 		for (String beanName : candidateNames) {
 			BeanDefinition beanDef = registry.getBeanDefinition(beanName);
 			if (beanDef.getAttribute(ConfigurationClassUtils.CONFIGURATION_CLASS_ATTRIBUTE) != null) {
@@ -318,12 +318,12 @@ public class ConfigurationClassPostProcessor implements BeanDefinitionRegistryPo
 		Set<BeanDefinitionHolder> candidates = new LinkedHashSet<>(configCandidates);
 		Set<ConfigurationClass> alreadyParsed = new HashSet<>(configCandidates.size());
 		do {
-			// 解析@Configuration类的配置信息,变成beanDefinition加入beanFactory的beanDefinitionMap中
-			// 最终的解析过程是代理给了一个实例化的ClassPathBeanDefinitionScanner类
+			// 解析配置类,变成beanDefinition加入beanFactory的beanDefinitionMap中
+			// 最终的解析过程是委托给了一个实例化的ClassPathBeanDefinitionScanner类
 			parser.parse(candidates);
 			parser.validate();
 
-			// 得到@Configuration配置类下所有管辖的bean信息
+			// 得到所有配置类的bean信息
 			Set<ConfigurationClass> configClasses = new LinkedHashSet<>(parser.getConfigurationClasses());
 			configClasses.removeAll(alreadyParsed);
 
@@ -333,7 +333,8 @@ public class ConfigurationClassPostProcessor implements BeanDefinitionRegistryPo
 						registry, this.sourceExtractor, this.resourceLoader, this.environment,
 						this.importBeanNameGenerator, parser.getImportRegistry());
 			}
-			// 通过ConfigurationClass加载更多的BeanDefinition
+			// 通过ConfigurationClass加载更多的BeanDefinition,通过前面parser.parse(candidates),解析了@bean注解并保存在ConfigurationClass的beanMethods
+			// 再通过beanMethods,生成BeanDefinition信息并注册到beanDefinitionMap中
 			// 例如配置类有@EnableAspectJAutoProxy注解,则注册进去internalAutoProxyCreator的beanDefinition
 			this.reader.loadBeanDefinitions(configClasses);
 			alreadyParsed.addAll(configClasses);
@@ -352,7 +353,7 @@ public class ConfigurationClassPostProcessor implements BeanDefinitionRegistryPo
 						BeanDefinition bd = registry.getBeanDefinition(candidateName);
 						if (ConfigurationClassUtils.checkConfigurationClassCandidate(bd, this.metadataReaderFactory) &&
 								!alreadyParsedClasses.contains(bd.getBeanClassName())) {
-							// 类似递归,若@Configuration注解的配置类管辖了另外的@Configuration,再次循环
+							// 类似递归,若@Configuration注解的配置类管辖了另外的@Configuration(不在oldCandidateNames集合中),再次循环
 							candidates.add(new BeanDefinitionHolder(bd, candidateName));
 						}
 					}

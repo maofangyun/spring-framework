@@ -120,11 +120,14 @@ abstract class ConfigurationClassUtils {
 				return false;
 			}
 		}
-		// TODO FULL和LITE的区别
+		// full表示@Bean是在@Configuration修饰的类下
+		// lite表示@Bean是在@Component修饰的类下，是简化的
 		Map<String, Object> config = metadata.getAnnotationAttributes(Configuration.class.getName());
+		// @Configuration注解才能进入此代码块
 		if (config != null && !Boolean.FALSE.equals(config.get("proxyBeanMethods"))) {
 			beanDef.setAttribute(CONFIGURATION_CLASS_ATTRIBUTE, CONFIGURATION_CLASS_FULL);
 		}
+		// @ComponentScan,@Component,@ImportResource,@Import注解，都能进入此代码块
 		else if (config != null || isConfigurationCandidate(metadata)) {
 			beanDef.setAttribute(CONFIGURATION_CLASS_ATTRIBUTE, CONFIGURATION_CLASS_LITE);
 		}

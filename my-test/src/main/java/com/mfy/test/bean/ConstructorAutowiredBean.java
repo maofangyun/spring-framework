@@ -25,10 +25,12 @@ public class ConstructorAutowiredBean {
 //    @Autowired
 //    private PropertyBean propertyBean;
 
-  /*  @Autowired
+    @Autowired
     public ConstructorAutowiredBean(Student student) {
         this.student = student;
-    }*/
+    }
+
+	public ConstructorAutowiredBean(){}
 
 //    @Resource
     @PostConstruct

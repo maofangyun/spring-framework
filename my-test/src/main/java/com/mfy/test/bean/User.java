@@ -1,6 +1,8 @@
 package com.mfy.test.bean;
 
+import org.springframework.context.annotation.Configuration;
 
+@Configuration
 public class User {
 	private String name;
 
@@ -10,11 +12,6 @@ public class User {
 				"name='" + name + '\'' +
 				", sex='" + sex + '\'' +
 				'}';
-	}
-
-	public User(String name, String sex) {
-		this.name = name;
-		this.sex = sex;
 	}
 
 	private String sex;
