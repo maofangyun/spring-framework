@@ -14,7 +14,7 @@
 
     <!--<import resource="spring-jdbc.xml"/>-->
     <!--@Service @Component @Controller 如果不配做这个自定义标签，就不认识注解-->
-    <context:component-scan base-package="com.mfy.test" scoped-proxy="interfaces"></context:component-scan>
+    <context:component-scan base-package="com.mfy.test" scoped-proxy="interfaces"/>
     <!--这两个beanDefinition会在实例化过程中合并成一个-->
     <bean id="parent" class="com.mfy.test.bean.Parent" abstract="true">
         <property name="username" value="parent name"/>

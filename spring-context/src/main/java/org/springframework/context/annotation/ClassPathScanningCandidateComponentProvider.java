@@ -428,6 +428,8 @@ public class ClassPathScanningCandidateComponentProvider implements EnvironmentC
 				}
 				if (resource.isReadable()) {
 					try {
+						// return new SimpleMetadataReader(resource, this.resourceLoader.getClassLoader());
+						// 解析了字节码文件,提取出来对应类的元信息,不会触发类加载的初始化阶段
 						// metadataReader包含了此类的所有信息(其实就三个方法,分别获取类的Resource,ClassMetadata和AnnotationMetadata)
 						MetadataReader metadataReader = getMetadataReaderFactory().getMetadataReader(resource);
 						// 筛选出符合条件(有@Component注解,不在excludeFilters中,同时在includeFilters中)的bean,生成对应的BeanDefinition

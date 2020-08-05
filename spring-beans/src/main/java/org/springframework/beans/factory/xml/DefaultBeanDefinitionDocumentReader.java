@@ -152,7 +152,7 @@ public class DefaultBeanDefinitionDocumentReader implements BeanDefinitionDocume
 
 		BeanDefinitionParserDelegate delegate = new BeanDefinitionParserDelegate(readerContext);
 		// 解析出来的<beans/>标签的属性信息,会存放在delegate的成员变量DocumentDefaultsDefinition defaults中
-		// 可以理解为,delegate是<bean/>标签信息的存储类
+		// 可以理解为,delegate是<beans/>标签信息的存储类
 		delegate.initDefaults(root, parentDelegate);
 		return delegate;
 	}

@@ -1398,7 +1398,7 @@ public class BeanDefinitionParserDelegate {
 			error("Unable to locate Spring NamespaceHandler for XML schema namespace [" + namespaceUri + "]", ele);
 			return null;
 		}
-		// 解析的整个过程,都委托给了ComponentBeanDefinitionParser的parse()
+		// 解析的整个过程,都委托给了ComponentScanBeanDefinitionParser的parse()
 		return handler.parse(ele, new ParserContext(this.readerContext, this, containingBd));
 	}
 
