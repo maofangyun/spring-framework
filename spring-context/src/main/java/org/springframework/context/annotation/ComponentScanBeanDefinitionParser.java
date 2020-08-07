@@ -104,6 +104,8 @@ public class ComponentScanBeanDefinitionParser implements BeanDefinitionParser {
 
 		// 提取BeanDefinitionParserDelegate的属性,对scanner进行赋值
 		// useDefaultFilters = true时,includeFilters默认使用@Component
+		// 和@ComponentScan注解一样，最终也是使用ClassPathBeanDefinitionScanner
+		// 不同的是XML配置方式，使用doScan()进行解析，注解配置方式使用parse()进行解析(最终也是调用doScan())
 		ClassPathBeanDefinitionScanner scanner = createScanner(parserContext.getReaderContext(), useDefaultFilters);
 		scanner.setBeanDefinitionDefaults(parserContext.getDelegate().getBeanDefinitionDefaults());
 		scanner.setAutowireCandidatePatterns(parserContext.getDelegate().getAutowireCandidatePatterns());

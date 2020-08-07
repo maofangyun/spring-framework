@@ -131,6 +131,7 @@ final class PostProcessorRegistrationDelegate {
 			}
 
 			// 遍历BeanDefinitionRegistryPostProcessor实现类,调用postProcessBeanFactory()
+			// 对于ConfigurationClassPostProcessor,生成“配置”类(@Configuration)的代理类
 			invokeBeanFactoryPostProcessors(registryProcessors, beanFactory);
 			// 遍历非BeanDefinitionRegistryPostProcessor实现类,调用postProcessBeanFactory()
 			invokeBeanFactoryPostProcessors(regularPostProcessors, beanFactory);
