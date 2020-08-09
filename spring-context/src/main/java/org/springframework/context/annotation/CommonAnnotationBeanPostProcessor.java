@@ -291,8 +291,11 @@ public class CommonAnnotationBeanPostProcessor extends InitDestroyAnnotationBean
 
 	@Override
 	public void postProcessMergedBeanDefinition(RootBeanDefinition beanDefinition, Class<?> beanType, String beanName) {
+		// beanType中全部被@PostConstruct和@PreDestroy标注的方法
 		super.postProcessMergedBeanDefinition(beanDefinition, beanType, beanName);
+		// beanType中全部被@Resource标注的属性和方法
 		InjectionMetadata metadata = findResourceMetadata(beanName, beanType, null);
+		// 将metadata包含的信息放入beanDefinition
 		metadata.checkConfigMembers(beanDefinition);
 	}
 
@@ -313,8 +316,10 @@ public class CommonAnnotationBeanPostProcessor extends InitDestroyAnnotationBean
 
 	@Override
 	public PropertyValues postProcessProperties(PropertyValues pvs, Object bean, String beanName) {
+		// 从injectionMetadataCache缓存中获取metadata(包含@Resource注解的所有方法和属性信息)
 		InjectionMetadata metadata = findResourceMetadata(beanName, bean.getClass(), pvs);
 		try {
+			// 使用反射注入值(包含属性和方法)
 			metadata.inject(bean, beanName, pvs);
 		}
 		catch (Throwable ex) {
@@ -344,6 +349,7 @@ public class CommonAnnotationBeanPostProcessor extends InitDestroyAnnotationBean
 					if (metadata != null) {
 						metadata.clear(pvs);
 					}
+					// 寻找@Resource注解标注的属性和方法,并包装成元数据InjectionMetadata
 					metadata = buildResourceMetadata(clazz);
 					this.injectionMetadataCache.put(cacheKey, metadata);
 				}
@@ -362,7 +368,7 @@ public class CommonAnnotationBeanPostProcessor extends InitDestroyAnnotationBean
 
 		do {
 			final List<InjectionMetadata.InjectedElement> currElements = new ArrayList<>();
-
+			// 遍历targetClass的每一个属性,寻找@Resource
 			ReflectionUtils.doWithLocalFields(targetClass, field -> {
 				if (webServiceRefClass != null && field.isAnnotationPresent(webServiceRefClass)) {
 					if (Modifier.isStatic(field.getModifiers())) {
@@ -385,7 +391,7 @@ public class CommonAnnotationBeanPostProcessor extends InitDestroyAnnotationBean
 					}
 				}
 			});
-
+			// 遍历targetClass的每一个方法,寻找@Resource
 			ReflectionUtils.doWithLocalMethods(targetClass, method -> {
 				Method bridgedMethod = BridgeMethodResolver.findBridgedMethod(method);
 				if (!BridgeMethodResolver.isVisibilityBridgeMethodPair(method, bridgedMethod)) {

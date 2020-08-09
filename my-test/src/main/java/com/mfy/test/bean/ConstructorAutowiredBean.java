@@ -17,30 +17,37 @@ public class ConstructorAutowiredBean {
 		this.student = student;
 	}
 
-	//    @Resource
     @Autowired
     private Student student;
 
-//    @Resource
-//    @Autowired
-//    private PropertyBean propertyBean;
-
     @Autowired
+    private PropertyBean propertyBean;
+
+	@Autowired(required = false)
     public ConstructorAutowiredBean(Student student) {
         this.student = student;
     }
 
+	@Autowired(required = false)
+	public ConstructorAutowiredBean(PropertyBean propertyBean,Student student) {
+		this.propertyBean = propertyBean;
+		this.student = student;
+	}
+
 	public ConstructorAutowiredBean(){}
 
-//    @Resource
     @PostConstruct
     private void postConstruct() {
         System.out.println("=======ConstructorAutowiredBean.postConstruct========");
     }
 
-//    @Resource
     @PreDestroy
     public void preDestroy() {
         System.out.println("=======ConstructorAutowiredBean.preDestroy========");
     }
+
+    @Autowired
+	public void test(){
+		System.out.println("test method @Autowired");
+	}
 }

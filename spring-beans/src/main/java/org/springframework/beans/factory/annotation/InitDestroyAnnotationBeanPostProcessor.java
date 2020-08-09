@@ -146,7 +146,9 @@ public class InitDestroyAnnotationBeanPostProcessor
 
 	@Override
 	public void postProcessMergedBeanDefinition(RootBeanDefinition beanDefinition, Class<?> beanType, String beanName) {
+		// 找出beanType中全部被@PostConstruct和@PreDestroy标注的方法
 		LifecycleMetadata metadata = findLifecycleMetadata(beanType);
+		// 将metadata包含的信息放入beanDefinition
 		metadata.checkConfigMembers(beanDefinition);
 	}
 
@@ -207,6 +209,7 @@ public class InitDestroyAnnotationBeanPostProcessor
 			synchronized (this.lifecycleMetadataCache) {
 				metadata = this.lifecycleMetadataCache.get(clazz);
 				if (metadata == null) {
+					// 寻找@PostConstruct注解和@PreDestroy注解标注的方法,并包装成元数据LifecycleMetadata
 					metadata = buildLifecycleMetadata(clazz);
 					this.lifecycleMetadataCache.put(clazz, metadata);
 				}
@@ -226,9 +229,11 @@ public class InitDestroyAnnotationBeanPostProcessor
 		Class<?> targetClass = clazz;
 
 		do {
+			// 装载@PostConstruct注解的方法信息
 			final List<LifecycleElement> currInitMethods = new ArrayList<>();
+			// 装载@PreDestroy注解的方法信息
 			final List<LifecycleElement> currDestroyMethods = new ArrayList<>();
-
+			// 遍历targetClass的每一个方法,寻找@PostConstruct和@PreDestroy
 			ReflectionUtils.doWithLocalMethods(targetClass, method -> {
 				if (this.initAnnotationType != null && method.isAnnotationPresent(this.initAnnotationType)) {
 					LifecycleElement element = new LifecycleElement(method);
@@ -247,6 +252,7 @@ public class InitDestroyAnnotationBeanPostProcessor
 
 			initMethods.addAll(0, currInitMethods);
 			destroyMethods.addAll(currDestroyMethods);
+			// 向上寻找父类
 			targetClass = targetClass.getSuperclass();
 		}
 		while (targetClass != null && targetClass != Object.class);

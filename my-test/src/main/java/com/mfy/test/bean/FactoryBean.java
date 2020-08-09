@@ -2,10 +2,15 @@ package com.mfy.test.bean;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-public class FactoryBean {
+public class FactoryBean implements org.springframework.beans.factory.FactoryBean<Woman> {
 
-    public Object factoryMethod(String id,@Autowired Son son) {
-        System.out.println("=========factoryMethod=========");
-        return new PropertyClass();
-    }
+	@Override
+	public Woman getObject() {
+		return new Woman();
+	}
+
+	@Override
+	public Class<?> getObjectType() {
+		return Woman.class;
+	}
 }
