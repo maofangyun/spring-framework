@@ -236,6 +236,9 @@ public abstract class AbstractAutoProxyCreator extends ProxyProcessorSupport
 	@Override
 	public Object getEarlyBeanReference(Object bean, String beanName) {
 		Object cacheKey = getCacheKey(bean.getClass(), beanName);
+		// earlyProxyReferences被用来防止多次创建同一个target的代理对象
+		// 例如A和B循环依赖时,A和B都被代理的情况,此方法会与postProcessAfterInitialization()都返回代理对象
+		// 为了防止A的代理对象被多次创建,用earlyProxyReferences来判断
 		this.earlyProxyReferences.put(cacheKey, bean);
 		return wrapIfNecessary(bean, beanName, cacheKey);
 	}

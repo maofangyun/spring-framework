@@ -335,6 +335,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 						}
 					});
 					// 当bean类型是FactoryBean时,通过FactoryBean的getObject()获取真正要返回的bean
+					// 此处得到的bean,不受spring管理,不在spring的一级缓存中
 					bean = getObjectForBeanInstance(sharedInstance, name, beanName, mbd);
 				}
 
@@ -1823,6 +1824,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 				mbd = getMergedLocalBeanDefinition(beanName);
 			}
 			boolean synthetic = (mbd != null && mbd.isSynthetic());
+			// 调用factory的getObject(),直接获取返回值object
 			object = getObjectFromFactoryBean(factory, beanName, !synthetic);
 		}
 		return object;

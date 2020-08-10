@@ -23,7 +23,7 @@ public class AspectBean {
 		System.out.println("前置通知---->before   方法名是:"+mathName+"\t参数列表是:"+args);
 	}
 
-	@After("execution(* com.mfy.test.bean.IndexService.test(..))")
+	@After("execution(* com.mfy.test.bean.UserService.getIndexService(..))")
 	public void after(){
 		System.out.println("后置通知---->after....");
 	}
