@@ -177,7 +177,7 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 	 * @return the registered singleton object, or {@code null} if none found
 	 */
 	@Nullable
-	// 解决setter()中循环依赖的问题
+	// 解决循环依赖的问题
 	protected Object getSingleton(String beanName, boolean allowEarlyReference) {
 		// 一级缓存
 		Object singletonObject = this.singletonObjects.get(beanName);
