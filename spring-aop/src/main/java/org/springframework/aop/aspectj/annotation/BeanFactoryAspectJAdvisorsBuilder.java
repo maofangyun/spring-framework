@@ -101,12 +101,14 @@ public class BeanFactoryAspectJAdvisorsBuilder {
 						if (beanType == null) {
 							continue;
 						}
+						// 获取@Aspect注解标注的类
 						if (this.advisorFactory.isAspect(beanType)) {
 							aspectNames.add(beanName);
 							AspectMetadata amd = new AspectMetadata(beanType, beanName);
 							if (amd.getAjType().getPerClause().getKind() == PerClauseKind.SINGLETON) {
 								MetadataAwareAspectInstanceFactory factory =
 										new BeanFactoryAspectInstanceFactory(this.beanFactory, beanName);
+								// 获取beanName对应类中的所有增强
 								List<Advisor> classAdvisors = this.advisorFactory.getAdvisors(factory);
 								if (this.beanFactory.isSingleton(beanName)) {
 									this.advisorsCache.put(beanName, classAdvisors);

@@ -335,7 +335,6 @@ public class ConfigurationClassPostProcessor implements BeanDefinitionRegistryPo
 			}
 			// 通过ConfigurationClass加载更多的BeanDefinition,通过前面parser.parse(candidates),解析了@bean注解并保存在ConfigurationClass的beanMethods
 			// 再通过beanMethods,生成BeanDefinition信息并注册到beanDefinitionMap中
-			// 例如配置类有@EnableAspectJAutoProxy注解,则注册进去internalAutoProxyCreator的beanDefinition
 			this.reader.loadBeanDefinitions(configClasses);
 			alreadyParsed.addAll(configClasses);
 

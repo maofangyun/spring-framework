@@ -17,10 +17,10 @@ public class ConstructorAutowiredBean {
 		this.student = student;
 	}
 
-    @Autowired
+    //@Autowired
     private Student student;
 
-    @Autowired
+    //@Autowired
     private PropertyBean propertyBean;
 
 	@Autowired(required = false)

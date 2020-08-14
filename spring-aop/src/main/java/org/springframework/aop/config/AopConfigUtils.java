@@ -123,6 +123,9 @@ public abstract class AopConfigUtils {
 		if (registry.containsBeanDefinition(AUTO_PROXY_CREATOR_BEAN_NAME)) {
 			BeanDefinition apcDefinition = registry.getBeanDefinition(AUTO_PROXY_CREATOR_BEAN_NAME);
 			if (!cls.getName().equals(apcDefinition.getBeanClassName())) {
+				// 有三种AOP的配置形式，有基于Spring内置的，有基于用户配置文件的，有基于注解的，基于注解的优先级最高，
+				// 一般配置一种就可以，如果配置多种则优先级高的会覆盖优先级低的
+				// 通过比较代理类在集合中的序号来确定优先级,基于注解形式的优先级高
 				int currentPriority = findPriorityForClass(apcDefinition.getBeanClassName());
 				int requiredPriority = findPriorityForClass(cls);
 				if (currentPriority < requiredPriority) {

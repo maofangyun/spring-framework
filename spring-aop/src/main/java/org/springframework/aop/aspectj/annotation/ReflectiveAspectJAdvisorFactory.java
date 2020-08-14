@@ -122,7 +122,9 @@ public class ReflectiveAspectJAdvisorFactory extends AbstractAspectJAdvisorFacto
 				new LazySingletonAspectInstanceFactoryDecorator(aspectInstanceFactory);
 
 		List<Advisor> advisors = new ArrayList<>();
+		// getAdvisorMethods(aspectClass),获取aspectClass中所有没有被@Pointcut标注的方法
 		for (Method method : getAdvisorMethods(aspectClass)) {
+			// 获取method是否为增强
 			Advisor advisor = getAdvisor(method, lazySingletonAspectInstanceFactory, advisors.size(), aspectName);
 			if (advisor != null) {
 				advisors.add(advisor);
@@ -149,7 +151,7 @@ public class ReflectiveAspectJAdvisorFactory extends AbstractAspectJAdvisorFacto
 	private List<Method> getAdvisorMethods(Class<?> aspectClass) {
 		final List<Method> methods = new ArrayList<>();
 		ReflectionUtils.doWithMethods(aspectClass, method -> {
-			// Exclude pointcuts
+			// 这里需要排除@Pointcut标注的方法，因为是空方法，不起作用
 			if (AnnotationUtils.getAnnotation(method, Pointcut.class) == null) {
 				methods.add(method);
 			}
@@ -190,7 +192,7 @@ public class ReflectiveAspectJAdvisorFactory extends AbstractAspectJAdvisorFacto
 			int declarationOrderInAspect, String aspectName) {
 
 		validate(aspectInstanceFactory.getAspectMetadata().getAspectClass());
-
+		// 获取切点信息
 		AspectJExpressionPointcut expressionPointcut = getPointcut(
 				candidateAdviceMethod, aspectInstanceFactory.getAspectMetadata().getAspectClass());
 		if (expressionPointcut == null) {

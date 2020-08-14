@@ -211,6 +211,7 @@ public class InitDestroyAnnotationBeanPostProcessor
 				if (metadata == null) {
 					// 寻找@PostConstruct注解和@PreDestroy注解标注的方法,并包装成元数据LifecycleMetadata
 					metadata = buildLifecycleMetadata(clazz);
+					// 将LifecycleMetadata缓存,用来后面调用@PostConstruct注解和@PreDestroy注解标注的方法
 					this.lifecycleMetadataCache.put(clazz, metadata);
 				}
 				return metadata;
