@@ -102,6 +102,7 @@ public class ProxyCreatorSupport extends AdvisedSupport {
 		if (!this.active) {
 			activate();
 		}
+		// getAopProxyFactory()会返回aopProxyFactory,在构造方法中会赋值aopProxyFactory=new DefaultAopProxyFactory()
 		return getAopProxyFactory().createAopProxy(this);
 	}
 

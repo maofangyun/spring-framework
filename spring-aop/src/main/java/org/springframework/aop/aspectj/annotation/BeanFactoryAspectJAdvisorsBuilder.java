@@ -89,6 +89,7 @@ public class BeanFactoryAspectJAdvisorsBuilder {
 				if (aspectNames == null) {
 					List<Advisor> advisors = new ArrayList<>();
 					aspectNames = new ArrayList<>();
+					// 得到容器中所有的bean名称
 					String[] beanNames = BeanFactoryUtils.beanNamesForTypeIncludingAncestors(
 							this.beanFactory, Object.class, true, false);
 					for (String beanName : beanNames) {
@@ -111,6 +112,7 @@ public class BeanFactoryAspectJAdvisorsBuilder {
 								// 获取beanName对应类中的所有增强
 								List<Advisor> classAdvisors = this.advisorFactory.getAdvisors(factory);
 								if (this.beanFactory.isSingleton(beanName)) {
+									// 缓存每个切面类和增强的映射关系
 									this.advisorsCache.put(beanName, classAdvisors);
 								}
 								else {

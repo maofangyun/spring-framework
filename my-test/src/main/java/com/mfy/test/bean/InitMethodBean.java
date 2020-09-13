@@ -2,12 +2,14 @@ package com.mfy.test.bean;
 
 import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 
 /*
 * 如果需要在一个类实例化以后去做一些事情，那么就可以借助这个接口来完成
 * */
+@Component
 public class InitMethodBean implements InitializingBean,BeanNameAware {
 
     @PostConstruct

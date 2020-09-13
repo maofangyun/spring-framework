@@ -158,11 +158,13 @@ public class ReflectiveMethodInvocation implements ProxyMethodInvocation, Clonea
 	@Override
 	@Nullable
 	public Object proceed() throws Throwable {
-		// We start with an index of -1 and increment early.
+		// 调用链的索引从-1开始
 		if (this.currentInterceptorIndex == this.interceptorsAndDynamicMethodMatchers.size() - 1) {
 			return invokeJoinpoint();
 		}
-
+		// interceptorOrInterceptionAdvice集合中,第一个被调用的是ExposeInvocationInterceptor,
+		// ExposeInvocationInterceptor的作用是用于暴露MethodInvocation对象到ThreadLocal中,
+		// 如果其他地方需要当前的MethodInvocation对象,直接通过调用currentInvocation()方法取出
 		Object interceptorOrInterceptionAdvice =
 				this.interceptorsAndDynamicMethodMatchers.get(++this.currentInterceptorIndex);
 		if (interceptorOrInterceptionAdvice instanceof InterceptorAndDynamicMethodMatcher) {

@@ -6,8 +6,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class IndexService {
 
-	@Autowired
-	private UserService userService;
+//	@Autowired
+//	private UserService userService;
 
 	private String key = "key";
 
@@ -15,9 +15,9 @@ public class IndexService {
 		System.out.println("IndexService()构造方法执行");
 	}
 
-	public UserService getUserService() {
-		return userService;
-	}
+//	public UserService getUserService() {
+//		return userService;
+//	}
 
 	public void test(){
 		System.out.println("indexService.....test()");

@@ -1,10 +1,8 @@
 package com.mfy.test.bean;
 
 import org.aspectj.lang.JoinPoint;
-import org.aspectj.lang.annotation.After;
-import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Before;
-import org.aspectj.lang.annotation.Pointcut;
+import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.annotation.*;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
@@ -17,11 +15,11 @@ public class AspectBean {
 	@Pointcut("execution(* com.mfy.test.bean.IndexService.test(..))")
 	public void pc1(){}
 
-	@Pointcut("execution(* com.mfy.test.bean.UserService.getIndexService(..))")
-	public void pc2(){}
+//	@Pointcut("execution(* com.mfy.test.bean.UserService.getIndexService(..))")
+//	public void pc2(){}
 
 	@Before("pc1()")
-	public void before(JoinPoint join){
+	public void beforeTest(JoinPoint join){
 		//获取方法名
 		String mathName=join.getSignature().getName();
 		//获取参数列表
@@ -30,8 +28,20 @@ public class AspectBean {
 		System.out.println("前置通知---->before   方法名是:"+mathName+"\t参数列表是:"+args);
 	}
 
-	@After("pc2()")
-	public void after(){
+	@After("pc1()")
+	public void afterTest(){
 		System.out.println("后置通知---->after....");
+	}
+
+	@Around("pc1()")
+	public void aroundTest(ProceedingJoinPoint pjp) throws Throwable {
+		System.out.println("环绕增强----> around  前置增强");
+		pjp.proceed();
+		System.out.println("环绕增强----> around  后置增强");
+	}
+
+	@AfterReturning("pc1()")
+	public void afterReturningTest(JoinPoint joinPoint){
+		System.out.println("返回增强 -----> afterReturning");
 	}
 }

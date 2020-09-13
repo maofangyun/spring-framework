@@ -1820,6 +1820,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		}
 		if (mbd == null || !mbd.isSynthetic()) {
 			// bean初始化后,调用PostProcessors的postProcessAfterInitialization()方法
+			// 若有代理，则在这一步返回代理对象
 			wrappedBean = applyBeanPostProcessorsAfterInitialization(wrappedBean, beanName);
 		}
 

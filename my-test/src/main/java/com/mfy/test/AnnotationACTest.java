@@ -16,7 +16,7 @@ public class AnnotationACTest {
 		AnnotationConfigApplicationContext ac = new AnnotationConfigApplicationContext();
 		ac.register(BeanConfig.class);
 		ac.refresh();
-		UserService userService = ac.getBean(UserService.class);
-		userService.getIndexService().test();
+		IndexService bean = ac.getBean(IndexService.class);
+		bean.test();
 	}
 }
