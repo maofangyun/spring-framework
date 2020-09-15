@@ -57,4 +57,8 @@ public class UserBalanceService {
 			C3P0Util.close(connection);
 		}
 	}
+
+	public void test(){
+		System.out.println("----------------------");
+	}
 }
