@@ -329,9 +329,11 @@ public abstract class TransactionAspectSupport implements BeanFactoryAware, Init
 	protected Object invokeWithinTransaction(Method method, @Nullable Class<?> targetClass,
 			final InvocationCallback invocation) throws Throwable {
 
-		// If the transaction attribute is null, the method is non-transactional.
+		// transactionAttributeSource属性,在解析@EnableTransactionManagement注解时,
+		// 会注入ProxyTransactionManagementConfiguration,并使用@bean注入transactionAttributeSource
 		TransactionAttributeSource tas = getTransactionAttributeSource();
 		final TransactionAttribute txAttr = (tas != null ? tas.getTransactionAttribute(method, targetClass) : null);
+		// 获取事物管理器TransactionManager,主要是从spring容器中获取,通过txAttr可以动态选择不同的TransactionManager
 		final TransactionManager tm = determineTransactionManager(txAttr);
 
 		if (this.reactiveAdapterRegistry != null && tm instanceof ReactiveTransactionManager) {
@@ -356,7 +358,7 @@ public abstract class TransactionAspectSupport implements BeanFactoryAware, Init
 		final String joinpointIdentification = methodIdentification(method, targetClass, txAttr);
 
 		if (txAttr == null || !(ptm instanceof CallbackPreferringPlatformTransactionManager)) {
-			// Standard transaction demarcation with getTransaction and commit/rollback calls.
+			// 返回一个事物的封装对象,进行后续的回滚和提交操作
 			TransactionInfo txInfo = createTransactionIfNecessary(ptm, txAttr, joinpointIdentification);
 
 			Object retVal;
@@ -366,11 +368,12 @@ public abstract class TransactionAspectSupport implements BeanFactoryAware, Init
 				retVal = invocation.proceedWithInvocation();
 			}
 			catch (Throwable ex) {
-				// target invocation exception
+				// 发生异常,回滚
 				completeTransactionAfterThrowing(txInfo, ex);
 				throw ex;
 			}
 			finally {
+				// 将事物同步管理器中的transactionInfoHolder置为最外层事物的txInfo
 				cleanupTransactionInfo(txInfo);
 			}
 
@@ -381,7 +384,7 @@ public abstract class TransactionAspectSupport implements BeanFactoryAware, Init
 					retVal = VavrDelegate.evaluateTryFailure(retVal, txAttr, status);
 				}
 			}
-
+			// 提交事物
 			commitTransactionAfterReturning(txInfo);
 			return retVal;
 		}
@@ -569,6 +572,7 @@ public abstract class TransactionAspectSupport implements BeanFactoryAware, Init
 		TransactionStatus status = null;
 		if (txAttr != null) {
 			if (tm != null) {
+				// 获取事物状态的对象
 				status = tm.getTransaction(txAttr);
 			}
 			else {
@@ -578,6 +582,7 @@ public abstract class TransactionAspectSupport implements BeanFactoryAware, Init
 				}
 			}
 		}
+		// 创建TransactionInfo,将tm,txAttr,status封装进去,并且将txInfo保存到ThreadLocal类型变量transactionInfoHolder,并返回
 		return prepareTransactionInfo(tm, txAttr, joinpointIdentification, status);
 	}
 
@@ -611,9 +616,7 @@ public abstract class TransactionAspectSupport implements BeanFactoryAware, Init
 			}
 		}
 
-		// We always bind the TransactionInfo to the thread, even if we didn't create
-		// a new transaction here. This guarantees that the TransactionInfo stack
-		// will be managed correctly even if no transaction was created by this aspect.
+		// 将txInfo和当前的线程绑定,同时保存上一次的txInfo
 		txInfo.bindToThread();
 		return txInfo;
 	}
@@ -628,6 +631,7 @@ public abstract class TransactionAspectSupport implements BeanFactoryAware, Init
 			if (logger.isTraceEnabled()) {
 				logger.trace("Completing transaction for [" + txInfo.getJoinpointIdentification() + "]");
 			}
+			// 提交事物
 			txInfo.getTransactionManager().commit(txInfo.getTransactionStatus());
 		}
 	}
@@ -644,8 +648,10 @@ public abstract class TransactionAspectSupport implements BeanFactoryAware, Init
 				logger.trace("Completing transaction for [" + txInfo.getJoinpointIdentification() +
 						"] after exception: " + ex);
 			}
+			// 判断@Transactional的rollbackFor属性,是否包含了ex类型的异常
 			if (txInfo.transactionAttribute != null && txInfo.transactionAttribute.rollbackOn(ex)) {
 				try {
+					// 回滚事物
 					txInfo.getTransactionManager().rollback(txInfo.getTransactionStatus());
 				}
 				catch (TransactionSystemException ex2) {
@@ -655,6 +661,7 @@ public abstract class TransactionAspectSupport implements BeanFactoryAware, Init
 				}
 				catch (RuntimeException | Error ex2) {
 					logger.error("Application exception overridden by rollback exception", ex);
+					// 需要抛出导致事物回滚的异常
 					throw ex2;
 				}
 			}
@@ -777,7 +784,7 @@ public abstract class TransactionAspectSupport implements BeanFactoryAware, Init
 	 * Concrete interceptors/aspects adapt this to their invocation mechanism.
 	 */
 	@FunctionalInterface
-	protected interface InvocationCallback {
+	public interface InvocationCallback {
 
 		Object proceedWithInvocation() throws Throwable;
 	}

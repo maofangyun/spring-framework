@@ -592,6 +592,8 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 			}
 			// 为避免后期循环依赖，可以在Bean初始化完成前将创建实例的ObjectFactory加入singletonFactories(三级缓存),
 			// 将未完成初始化的bean提前曝光,这里是解决循环依赖的关键点
+			// 所有的bean都会先加入三级缓存,只有存在循环依赖时,才会触发三级缓存中的getEarlyBeanReference()获取到未初始化的bean,
+			// 并将其加入到二级缓存,因此在二级缓存中,存储的都是有循环依赖的bean
 			addSingletonFactory(beanName, () -> getEarlyBeanReference(beanName, mbd, bean));
 		}
 
@@ -600,7 +602,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		try {
 			// 给bean的属性赋值(自动注入)
 			populateBean(beanName, mbd, instanceWrapper);
-			// 初始化bean,调用bean的init方法和遍历所有bean的postProcessors
+			// 初始化bean,调用bean的init()方法,并且遍历所有bean的postProcessors
 			exposedObject = initializeBean(beanName, exposedObject, mbd);
 		}
 		catch (Throwable ex) {

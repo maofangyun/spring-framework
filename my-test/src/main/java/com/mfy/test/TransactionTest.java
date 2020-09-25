@@ -4,6 +4,8 @@ import com.mfy.test.tx.TransConfig;
 import com.mfy.test.tx.UserBalanceService;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
+import java.sql.SQLException;
+
 public class TransactionTest {
 
 	public static void main(String[] args) {

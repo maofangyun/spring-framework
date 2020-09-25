@@ -18,7 +18,7 @@ public class DataSourceConfiguration {
 
 
     @Bean
-    public DataSource dynamicDataSource() {
+    public ComboPooledDataSource dynamicDataSource() {
         ComboPooledDataSource comboPooledDataSource = new ComboPooledDataSource();
         try {
             comboPooledDataSource.setDriverClass("com.mysql.cj.jdbc.Driver");
@@ -40,12 +40,12 @@ public class DataSourceConfiguration {
             e.printStackTrace();
         }
 
-        Map<Object, Object> targetDataSources = new HashMap<>();
-        targetDataSources.put("ds1",comboPooledDataSource);
-
-        DynamicDataSource dynamicDataSource = new DynamicDataSource();
-        dynamicDataSource.setTargetDataSources(targetDataSources);
-        dynamicDataSource.setDefaultTargetDataSource(comboPooledDataSource);
-        return dynamicDataSource;
+//        Map<Object, Object> targetDataSources = new HashMap<>();
+//        targetDataSources.put("ds1",comboPooledDataSource);
+//
+//        DynamicDataSource dynamicDataSource = new DynamicDataSource();
+//        dynamicDataSource.setTargetDataSources(targetDataSources);
+//        dynamicDataSource.setDefaultTargetDataSource(comboPooledDataSource);
+        return comboPooledDataSource;
     }
 }

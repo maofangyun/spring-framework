@@ -96,6 +96,7 @@ public abstract class AbstractFallbackTransactionAttributeSource implements Tran
 
 		// First, see if we have a cached value.
 		Object cacheKey = getCacheKey(method, targetClass);
+		// 当AOP给targetClass匹配增强,调用findAdvisorsThatCanApply()时,最终会调用到这里,给attributeCache的赋值
 		TransactionAttribute cached = this.attributeCache.get(cacheKey);
 		if (cached != null) {
 			// Value will either be canonical value indicating there is no transaction attribute,
@@ -108,7 +109,7 @@ public abstract class AbstractFallbackTransactionAttributeSource implements Tran
 			}
 		}
 		else {
-			// We need to work it out.
+			// 获取方法上的@Transactional注解信息
 			TransactionAttribute txAttr = computeTransactionAttribute(method, targetClass);
 			// Put it in the cache.
 			if (txAttr == null) {
@@ -158,7 +159,7 @@ public abstract class AbstractFallbackTransactionAttributeSource implements Tran
 		// If the target class is null, the method will be unchanged.
 		Method specificMethod = AopUtils.getMostSpecificMethod(method, targetClass);
 
-		// First try is the method in the target class.
+		// 获取方法上的@Transactional注解信息
 		TransactionAttribute txAttr = findTransactionAttribute(specificMethod);
 		if (txAttr != null) {
 			return txAttr;

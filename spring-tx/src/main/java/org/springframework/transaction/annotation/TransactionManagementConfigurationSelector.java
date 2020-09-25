@@ -29,7 +29,7 @@ import org.springframework.util.ClassUtils;
  *
  * @author Chris Beams
  * @author Juergen Hoeller
- * @since 3.1
+住， * @since 3.1
  * @see EnableTransactionManagement
  * @see ProxyTransactionManagementConfiguration
  * @see TransactionManagementConfigUtils#TRANSACTION_ASPECT_CONFIGURATION_CLASS_NAME
@@ -47,6 +47,10 @@ public class TransactionManagementConfigurationSelector extends AdviceModeImport
 	protected String[] selectImports(AdviceMode adviceMode) {
 		switch (adviceMode) {
 			case PROXY:
+				// AutoProxyRegistrar基本没用
+				// ProxyTransactionManagementConfiguration会向容器中注册事物切面类BeanFactoryTransactionAttributeSourceAdvisor,
+				// 注册事物注解的扫描器TransactionAttributeSource
+				// 注册事物的拦截器TransactionInterceptor
 				return new String[] {AutoProxyRegistrar.class.getName(),
 						ProxyTransactionManagementConfiguration.class.getName()};
 			case ASPECTJ:

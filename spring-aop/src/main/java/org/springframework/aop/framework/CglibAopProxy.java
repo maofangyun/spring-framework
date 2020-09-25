@@ -674,6 +674,7 @@ class CglibAopProxy implements AopProxy, Serializable {
 				// Get as late as possible to minimize the time we "own" the target, in case it comes from a pool...
 				target = targetSource.getTarget();
 				Class<?> targetClass = (target != null ? target.getClass() : null);
+				// 获取目标类的方法所有的增强,并将增强通过适配器包装成MethodInterceptor接口的实现类
 				List<Object> chain = this.advised.getInterceptorsAndDynamicInterceptionAdvice(method, targetClass);
 				Object retVal;
 				// 当调用链为空时，直接通过反射调用被代理对象的方法即可
