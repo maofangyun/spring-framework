@@ -243,7 +243,7 @@ class ConfigurationClassParser {
 			}
 		}
 
-		// Recursively process the configuration class and its superclass hierarchy.
+		// 递归的处理配置类configClass及其所继承的父类
 		SourceClass sourceClass = asSourceClass(configClass, filter);
 		do {
 			sourceClass = doProcessConfigurationClass(configClass, sourceClass, filter);
@@ -267,7 +267,7 @@ class ConfigurationClassParser {
 			throws IOException {
 
 		if (configClass.getMetadata().isAnnotated(Component.class.getName())) {
-			// 递归处理父类也有@Component的情况
+			// 递归处理内部类
 			processMemberClasses(configClass, sourceClass, filter);
 		}
 
@@ -299,6 +299,8 @@ class ConfigurationClassParser {
 					if (bdCand == null) {
 						bdCand = holder.getBeanDefinition();
 					}
+					// 判断通过@ComponentScan扫描新加入的bdCand,是否存在@Configuration,@ComponentScan,@Component,@ImportResource,@Import注解,
+					// 若有,则再次进入配置类的解析处理流程
 					if (ConfigurationClassUtils.checkConfigurationClassCandidate(bdCand, this.metadataReaderFactory)) {
 						parse(bdCand.getBeanClassName(), holder.getBeanName());
 					}
@@ -306,7 +308,7 @@ class ConfigurationClassParser {
 			}
 		}
 
-		// 处理@Import注解
+		// 处理@Import注解,给configClass加入ImportBeanDefinitionRegistrar,后续会调用
 		processImports(configClass, sourceClass, getImports(sourceClass), filter, true);
 
 		// 处理@ImportResource注解

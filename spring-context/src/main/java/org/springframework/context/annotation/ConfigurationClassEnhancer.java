@@ -313,7 +313,17 @@ class ConfigurationClassEnhancer {
 					return enhanceFactoryBean(factoryBean, beanMethod.getReturnType(), beanFactory, beanName);
 				}
 			}
-
+			// 根据currentlyInvokedFactoryMethod判断beanMethod是否当前正在被调用的Method,针对如下情况
+			//	@Bean
+			//	public User getUser(){
+			//		getWoman();
+			//		return new User();
+			//	}
+			//	@Bean
+			//	public Woman getWoman(){
+			//		System.out.println("测试@Configuration的类方法内部调用");
+			//		return new Woman();
+			//	}
 			if (isCurrentlyInvokedFactoryMethod(beanMethod)) {
 				// The factory is calling the bean method in order to instantiate and register the bean
 				// (i.e. via a getBean() call) -> invoke the super implementation of the method to actually
@@ -358,6 +368,7 @@ class ConfigurationClassEnhancer {
 						}
 					}
 				}
+				// 调用getBean()从容器中获取bean实例
 				Object beanInstance = (useArgs ? beanFactory.getBean(beanName, beanMethodArgs) :
 						beanFactory.getBean(beanName));
 				if (!ClassUtils.isAssignableValue(beanMethod.getReturnType(), beanInstance)) {

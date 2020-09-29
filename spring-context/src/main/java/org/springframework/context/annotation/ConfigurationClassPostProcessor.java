@@ -275,6 +275,7 @@ public class ConfigurationClassPostProcessor implements BeanDefinitionRegistryPo
 				}
 			}
 			else if (ConfigurationClassUtils.checkConfigurationClassCandidate(beanDef, this.metadataReaderFactory)) {
+				// 若是无xml方式配置的,此处只会筛选出@Configuration注解的类(即ac.register(BeanConfig.class))
 				configCandidates.add(new BeanDefinitionHolder(beanDef, beanName));
 			}
 		}
@@ -320,6 +321,7 @@ public class ConfigurationClassPostProcessor implements BeanDefinitionRegistryPo
 		do {
 			// 解析配置类,变成beanDefinition加入beanFactory的beanDefinitionMap中
 			// 最终的解析过程是委托给了一个实例化的ClassPathBeanDefinitionScanner类
+			// 解析出来的配置类,存储在parser的configurationClasses属性中
 			parser.parse(candidates);
 			parser.validate();
 
@@ -335,6 +337,8 @@ public class ConfigurationClassPostProcessor implements BeanDefinitionRegistryPo
 			}
 			// 通过ConfigurationClass加载更多的BeanDefinition,通过前面parser.parse(candidates),解析了@bean注解并保存在ConfigurationClass的beanMethods
 			// 再通过beanMethods,生成BeanDefinition信息并注册到beanDefinitionMap中
+			// 将@ImportResource注解的资源引入spring
+			// 将@Import注解的类,生成BeanDefinition信息并注册到beanDefinitionMap中
 			this.reader.loadBeanDefinitions(configClasses);
 			alreadyParsed.addAll(configClasses);
 

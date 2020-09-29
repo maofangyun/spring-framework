@@ -129,7 +129,7 @@ class ComponentScanAnnotationParser {
 				return declaringClass.equals(className);
 			}
 		});
-		// 真正的扫描逻辑,返回扫描范围内的所有beanDefinition
+		// 真正的扫描逻辑,返回扫描范围内的所有新加入beanDefinitionMap的beanDefinition
 		return scanner.doScan(StringUtils.toStringArray(basePackages));
 	}
 

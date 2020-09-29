@@ -147,9 +147,11 @@ public class SimpleInstantiationStrategy implements InstantiationStrategy {
 			else {
 				ReflectionUtils.makeAccessible(factoryMethod);
 			}
-
+			// 获取先前的被调用的FactoryMethod,注意,priorInvokedFactoryMethod没有结束调用,
+			// 所以,在当前FactoryMethod调用完成之后,会重新放入currentlyInvokedFactoryMethod
 			Method priorInvokedFactoryMethod = currentlyInvokedFactoryMethod.get();
 			try {
+				// 将factoryMethod放入currentlyInvokedFactoryMethod,表明目前该factoryMethod正在被调用
 				currentlyInvokedFactoryMethod.set(factoryMethod);
 				Object result = factoryMethod.invoke(factoryBean, args);
 				if (result == null) {
@@ -159,6 +161,7 @@ public class SimpleInstantiationStrategy implements InstantiationStrategy {
 			}
 			finally {
 				if (priorInvokedFactoryMethod != null) {
+					// 当前FactoryMethod调用完成之后,会重新放入currentlyInvokedFactoryMethod
 					currentlyInvokedFactoryMethod.set(priorInvokedFactoryMethod);
 				}
 				else {
