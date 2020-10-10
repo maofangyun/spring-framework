@@ -5,13 +5,13 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.*;
 
 @Configuration
-@EnableWebMvc
 public class MvcConfig extends WebMvcConfigurationSupport {
 
     @Autowired
     private UserInterceptor userInterceptor;
 
-    @Override
+
+	@Override
     public void configureViewResolvers(ViewResolverRegistry registry) {
         registry.jsp("/WEB-INF/views/", ".jsp");
     }
@@ -22,7 +22,7 @@ public class MvcConfig extends WebMvcConfigurationSupport {
     }
 
     @Override
-    protected void addInterceptors(InterceptorRegistry registry) {
+    public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(userInterceptor).addPathPatterns("user/**");
 		registry.addInterceptor(new UserInterceptor1()).addPathPatterns("/user/**").excludePathPatterns("");
         super.addInterceptors(registry);

@@ -279,6 +279,8 @@ class ConfigurationClassBeanDefinitionReader {
 			BeanDefinitionHolder proxyDef = ScopedProxyCreator.createScopedProxy(
 					new BeanDefinitionHolder(beanDef, beanName), this.registry,
 					proxyMode == ScopedProxyMode.TARGET_CLASS);
+			// 通过@bean注解加入容器的BeanDefinition的类型是ConfigurationClassBeanDefinition,
+			// 重点:此类的属性包含configClass,在实例化beanDefToRegister时,将从容器中获取configClass的代理类,调用@bean标注的方法
 			beanDefToRegister = new ConfigurationClassBeanDefinition(
 					(RootBeanDefinition) proxyDef.getBeanDefinition(), configClass, metadata);
 		}

@@ -60,7 +60,9 @@ public abstract class AbstractDispatcherServletInitializer extends AbstractConte
 
 	@Override
 	public void onStartup(ServletContext servletContext) throws ServletException {
+		// 创建父容器和监听器,将父容器加入监听器,将监听器加入servlet容器
 		super.onStartup(servletContext);
+		// 创建子容器和DispatcherServlet,将子容器加入到DispatcherServlet,将DispatcherServlet加入servlet容器
 		registerDispatcherServlet(servletContext);
 	}
 
@@ -78,20 +80,34 @@ public abstract class AbstractDispatcherServletInitializer extends AbstractConte
 	protected void registerDispatcherServlet(ServletContext servletContext) {
 		String servletName = getServletName();
 		Assert.hasLength(servletName, "getServletName() must not return null or empty");
-
+		// 创建子容器
 		WebApplicationContext servletAppContext = createServletApplicationContext();
 		Assert.notNull(servletAppContext, "createServletApplicationContext() must not return null");
-
+		// 创建DispatcherServlet,作用类似web.xml文件的如下标签
+		//   <servlet>
+		//    <servlet-name>spring-dispatcher</servlet-name>
+		//    <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+		//	  <!--springmvc的配置文件-->
+		//    <init-param>
+		//      <param-name>contextConfigLocation</param-name>
+		//      <param-value>classpath:spring-dispatcher.xml</param-value>
+		//    </init-param>
+		//    <load-on-startup>0</load-on-startup>
+		//  </servlet>
 		FrameworkServlet dispatcherServlet = createDispatcherServlet(servletAppContext);
 		Assert.notNull(dispatcherServlet, "createDispatcherServlet(WebApplicationContext) must not return null");
 		dispatcherServlet.setContextInitializers(getServletApplicationContextInitializers());
-
+		// 将dispatcherServlet加入servlet容器中
 		ServletRegistration.Dynamic registration = servletContext.addServlet(servletName, dispatcherServlet);
 		if (registration == null) {
 			throw new IllegalStateException("Failed to register servlet with name '" + servletName + "'. " +
 					"Check if there is another servlet registered under the same name.");
 		}
-
+		// 作用类似web.xml文件的如下标签
+		//   <servlet-mapping>
+		//    <servlet-name>spring-dispatcher</servlet-name>
+		//    <url-pattern>/</url-pattern>
+		//   </servlet-mapping>
 		registration.setLoadOnStartup(1);
 		registration.addMapping(getServletMappings());
 		registration.setAsyncSupported(isAsyncSupported());

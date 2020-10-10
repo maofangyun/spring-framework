@@ -53,9 +53,12 @@ public abstract class AbstractAnnotationConfigDispatcherServletInitializer
 	@Override
 	@Nullable
 	protected WebApplicationContext createRootApplicationContext() {
+		// 钩子方法,获取根配置类
 		Class<?>[] configClasses = getRootConfigClasses();
 		if (!ObjectUtils.isEmpty(configClasses)) {
+			// 创建父容器
 			AnnotationConfigWebApplicationContext context = new AnnotationConfigWebApplicationContext();
+			// 注册配置类configClasses,为后续刷新容器提取beanDefinition提供入口类
 			context.register(configClasses);
 			return context;
 		}
@@ -71,6 +74,7 @@ public abstract class AbstractAnnotationConfigDispatcherServletInitializer
 	 */
 	@Override
 	protected WebApplicationContext createServletApplicationContext() {
+		// 创建子容器
 		AnnotationConfigWebApplicationContext context = new AnnotationConfigWebApplicationContext();
 		Class<?>[] configClasses = getServletConfigClasses();
 		if (!ObjectUtils.isEmpty(configClasses)) {

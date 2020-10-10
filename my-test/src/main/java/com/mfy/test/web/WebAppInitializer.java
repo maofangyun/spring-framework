@@ -1,11 +1,14 @@
 package com.mfy.test.web;
 
-import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
 
 import javax.servlet.Filter;
 
-@Component
+/**
+ * 不需要加@Component注解，因为tomcat启动时，会寻找实现了WebApplicationInitializer接口的类，并实例化
+ * @link SpringServletContainerInitializer
+ * @HandlesTypes(WebApplicationInitializer.class)
+ * */
 public class WebAppInitializer extends AbstractAnnotationConfigDispatcherServletInitializer {
 
     //父容器
