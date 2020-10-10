@@ -18,31 +18,20 @@ public class BalanceService {
 	@Autowired
 	private ComboPooledDataSource dataSource;
 
-	@Transactional(propagation= Propagation.REQUIRES_NEW)
-	public void insertBalance(String name,String acount) {
+	@Transactional(propagation= Propagation.NESTED)
+	public void insertBalance(String name,String acount) throws SQLException {
 		Connection connection = DataSourceUtils.getConnection(dataSource);
 		String sql = "INSERT INTO user_balance(name,balance) VALUES (?,?)";
-		try{
-			//获取PreparedStatement对象
-			PreparedStatement ps = connection.prepareStatement(sql);
-			//对sql语句对占位符进行动态赋值
-			ps.setString(1,name);
-			ps.setString(2,acount);
-			//执行更新操作
-			ps.executeUpdate();
-			if(true)
-				throw new RuntimeException();
-			ps.close();
-		}catch(Exception e){
-			e.printStackTrace();
+		//获取PreparedStatement对象
+		PreparedStatement ps = connection.prepareStatement(sql);
+		//对sql语句对占位符进行动态赋值
+		ps.setString(1,name);
+		ps.setString(2,acount);
+		//执行更新操作
+		ps.executeUpdate();
+		if(true) {
 			throw new RuntimeException();
-		}finally{
-			//关闭数据库连接
-//			try {
-//				connection.close();
-//			} catch (SQLException throwables) {
-//				throwables.printStackTrace();
-//			}
 		}
+		ps.close();
 	}
 }

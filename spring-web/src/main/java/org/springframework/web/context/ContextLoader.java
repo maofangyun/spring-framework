@@ -400,8 +400,9 @@ public class ContextLoader {
 		if (env instanceof ConfigurableWebEnvironment) {
 			((ConfigurableWebEnvironment) env).initPropertySources(sc, null);
 		}
-
+		// 扩展点,可以修改容器
 		customizeContext(sc, wac);
+		// 启动父容器
 		wac.refresh();
 	}
 

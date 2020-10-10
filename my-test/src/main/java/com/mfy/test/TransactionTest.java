@@ -8,7 +8,7 @@ import java.sql.SQLException;
 
 public class TransactionTest {
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws SQLException {
 		AnnotationConfigApplicationContext ac = new AnnotationConfigApplicationContext();
 		ac.register(TransConfig.class);
 		ac.refresh();

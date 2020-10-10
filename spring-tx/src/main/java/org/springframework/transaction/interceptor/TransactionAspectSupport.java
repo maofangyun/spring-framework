@@ -388,7 +388,7 @@ public abstract class TransactionAspectSupport implements BeanFactoryAware, Init
 			commitTransactionAfterReturning(txInfo);
 			return retVal;
 		}
-
+		// 下面的属于编程式事务,暂时不用看
 		else {
 			final ThrowableHolder throwableHolder = new ThrowableHolder();
 

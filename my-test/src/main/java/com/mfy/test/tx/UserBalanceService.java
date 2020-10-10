@@ -18,12 +18,17 @@ public class UserBalanceService {
 	@Autowired
 	private UserService userService;
 
+	/**
+	 * NESTED传播机制，如果子事务异常，父级可以捕获它的异常而不进行回滚，正常提交
+	 * 如果父级异常，子事务必然回滚，这就是和 REQUIRES_NEW 的区别
+	 * */
 	@Transactional
-	public void insert(String name,String acount) {
+	public void insert(String name,String acount) throws SQLException {
 		userService.insertUser(name);
-		try{
+		try {
 			balanceService.insertBalance(name, acount);
-		} catch (RuntimeException e){
+		}
+		catch (RuntimeException e){
 			e.printStackTrace();
 		}
 	}

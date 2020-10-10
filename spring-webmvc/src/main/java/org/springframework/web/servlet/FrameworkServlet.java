@@ -525,8 +525,8 @@ public abstract class FrameworkServlet extends HttpServletBean implements Applic
 			logger.info("Initializing Servlet '" + getServletName() + "'");
 		}
 		long startTime = System.currentTimeMillis();
-
 		try {
+			// 启动子容器
 			this.webApplicationContext = initWebApplicationContext();
 			initFrameworkServlet();
 		}
@@ -701,7 +701,7 @@ public abstract class FrameworkServlet extends HttpServletBean implements Applic
 		if (env instanceof ConfigurableWebEnvironment) {
 			((ConfigurableWebEnvironment) env).initPropertySources(getServletContext(), getServletConfig());
 		}
-
+		// 钩子方法,扩展点
 		postProcessWebApplicationContext(wac);
 		applyInitializers(wac);
 		// 刷新启动容器

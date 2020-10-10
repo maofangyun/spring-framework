@@ -344,7 +344,7 @@ public abstract class AbstractPlatformTransactionManager implements PlatformTran
 		// Use defaults if no transaction definition given.
 		TransactionDefinition def = (definition != null ? definition : TransactionDefinition.withDefaults());
 		// 创建事物对象DataSourceTransactionObject,封装了连接对象
-		// 此时transaction中的连接对象=null
+		// 第一次进入,transaction中的连接对象=null
 		// 需要在startTransaction()中才能再次获取并填充
 		Object transaction = doGetTransaction();
 		boolean debugEnabled = logger.isDebugEnabled();
@@ -448,7 +448,7 @@ public abstract class AbstractPlatformTransactionManager implements PlatformTran
 				throw beginEx;
 			}
 		}
-
+		// NESTED传播机制,不会挂起事务
 		if (definition.getPropagationBehavior() == TransactionDefinition.PROPAGATION_NESTED) {
 			if (!isNestedTransactionAllowed()) {
 				throw new NestedTransactionNotSupportedException(
@@ -762,6 +762,7 @@ public abstract class AbstractPlatformTransactionManager implements PlatformTran
 					unexpectedRollback = status.isGlobalRollbackOnly();
 					status.releaseHeldSavepoint();
 				}
+				// 只有是newTransaction=true(REQUIRES_NEW传播机制和最外层的事务),才会真正进行事务提交,
 				else if (status.isNewTransaction()) {
 					if (status.isDebug()) {
 						logger.debug("Initiating transaction commit");
