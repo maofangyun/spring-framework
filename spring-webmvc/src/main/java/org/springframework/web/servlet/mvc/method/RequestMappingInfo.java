@@ -514,7 +514,7 @@ public final class RequestMappingInfo implements RequestCondition<RequestMapping
 					this.paths, this.options.getUrlPathHelper(), this.options.getPathMatcher(),
 					this.options.useSuffixPatternMatch(), this.options.useTrailingSlashMatch(),
 					this.options.getFileExtensions());
-
+			// 从这里我们可以看到RequestMappingHandlerMapping中的每一个属性都被封装成了一个对应的处理类,典型的单一职责的体现
 			return new RequestMappingInfo(this.mappingName, patternsCondition,
 					new RequestMethodsRequestCondition(this.methods),
 					new ParamsRequestCondition(this.params),

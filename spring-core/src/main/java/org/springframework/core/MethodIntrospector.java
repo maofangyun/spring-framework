@@ -69,12 +69,17 @@ public final class MethodIntrospector {
 		for (Class<?> currentHandlerType : handlerTypes) {
 			final Class<?> targetClass = (specificHandlerType != null ? specificHandlerType : currentHandlerType);
 
-			ReflectionUtils.doWithMethods(currentHandlerType, method -> {
+			ReflectionUtils.doWithMethods(currentHandlerType, method -> {	//mc.doWith(method);
+				// 从代理对象上的一个方法,找到真实对象上对应的方法,例如:
+				// 传入的是public final void cn.wolfcode.springboot.utilstest.MyComponent$$EnhancerBySpringCGLIB$$238e719a.someLogic()
+				// 返回的是public void cn.wolfcode.springboot.utilstest.MyComponent.someLogic()
 				Method specificMethod = ClassUtils.getMostSpecificMethod(method, targetClass);
+				// 这个地方又是一个回调的方法 真正的解析获取RequestMappingInfo的地方
 				T result = metadataLookup.inspect(specificMethod);
 				if (result != null) {
 					Method bridgedMethod = BridgeMethodResolver.findBridgedMethod(specificMethod);
 					if (bridgedMethod == specificMethod || metadataLookup.inspect(bridgedMethod) == null) {
+						// 缓存Method和RequestMappingInfo的映射关系
 						methodMap.put(specificMethod, result);
 					}
 				}
