@@ -13,9 +13,9 @@ import java.io.File;
 public class WebTest {
 
 	public static void main(String[] args) {
-		String userDir = System.getProperty("user.dir")+File.separatorChar +"my-test"; // 项目目录
+		String userDir = System.getProperty("user.dir")+File.separatorChar; // 项目目录
 		String tomcatBaseDir = userDir + File.separatorChar + "tomcat";
-		String webappDir = userDir +File.separatorChar+ "build" + File.separatorChar + "classes";
+		String webappDir = userDir +File.separatorChar+ "build";
 
 		Tomcat tomcatServer = new Tomcat();
 		tomcatServer.setBaseDir(tomcatBaseDir);

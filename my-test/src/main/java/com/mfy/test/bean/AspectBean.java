@@ -12,7 +12,7 @@ import java.util.List;
 @Aspect
 public class AspectBean {
 
-	@Pointcut("execution(* com.mfy.test.bean.IndexService.test(..))")
+	@Pointcut("execution(* com.mfy.test.bean.IndexService.*(..))")
 	public void pc1(){}
 
 //	@Pointcut("execution(* com.mfy.test.bean.UserService.getIndexService(..))")

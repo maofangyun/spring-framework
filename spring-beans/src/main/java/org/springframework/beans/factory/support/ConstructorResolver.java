@@ -485,7 +485,8 @@ class ConstructorResolver {
 						mbd.constructorArgumentsResolved = true;
 						mbd.resolvedConstructorArguments = EMPTY_ARGS;
 					}
-					// 反射调用uniqueCandidate所表示的方法,进行实例化
+					// 反射调用uniqueCandidate所表示的方法,进行实例化,
+					// 注意:传入的factoryBean是代理对象,非常重要,区分普通AOP的关键(普通AOP是实例对象的反射调用)
 					bw.setBeanInstance(instantiate(beanName, mbd, factoryBean, uniqueCandidate, EMPTY_ARGS));
 					return bw;
 				}

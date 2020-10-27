@@ -156,6 +156,7 @@ public final class MappedInterceptor implements HandlerInterceptor {
 			return true;
 		}
 		for (String pattern : this.includePatterns) {
+			// 判断请求地址和拦截器设定的拦截地址是否匹配
 			if (pathMatcherToUse.match(pattern, lookupPath)) {
 				return true;
 			}

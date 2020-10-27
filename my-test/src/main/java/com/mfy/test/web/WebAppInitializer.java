@@ -31,6 +31,9 @@ public class WebAppInitializer extends AbstractAnnotationConfigDispatcherServlet
 
     @Override
     protected Filter[] getServletFilters() {
-        return super.getServletFilters();
-    }
+		CustomFilter customFilter = new CustomFilter();
+		Filter[] filters = new Filter[1];
+		filters[0] = customFilter;
+		return filters;
+	}
 }

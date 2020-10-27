@@ -12,11 +12,11 @@ public class BeanConfig {
 
 	@Bean
 	public User getUser(){
-		getWoman();
+		this.getWoman();
 		return new User();
 	}
 
-	@Bean
+	@Bean("women")
 	public Woman getWoman(){
 		System.out.println("测试@Configuration的类方法内部调用");
 		return new Woman();

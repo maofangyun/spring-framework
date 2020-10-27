@@ -111,10 +111,11 @@ public abstract class AbstractDispatcherServletInitializer extends AbstractConte
 		registration.setLoadOnStartup(1);
 		registration.addMapping(getServletMappings());
 		registration.setAsyncSupported(isAsyncSupported());
-
+		// 钩子方法,获取配置的过滤器,由于子容器没有启动,所以不能使用@Component的注解注入过滤器,只能手动new出来
 		Filter[] filters = getServletFilters();
 		if (!ObjectUtils.isEmpty(filters)) {
 			for (Filter filter : filters) {
+				// 向servlet容器中注册过滤器
 				registerServletFilter(servletContext, filter);
 			}
 		}

@@ -80,6 +80,7 @@ public class ViewNameMethodReturnValueHandler implements HandlerMethodReturnValu
 
 		if (returnValue instanceof CharSequence) {
 			String viewName = returnValue.toString();
+			// 将视图名称写入mavContainer
 			mavContainer.setViewName(viewName);
 			if (isRedirectViewName(viewName)) {
 				mavContainer.setRedirectModelScenario(true);

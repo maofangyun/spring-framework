@@ -22,4 +22,13 @@ public class IndexService {
 	public void test(){
 		System.out.println("indexService.....test()");
 	}
+
+	public void test1(){
+		System.out.println("测试方法test1");
+		this.test2();
+	}
+
+	public void test2(){
+		System.out.println("测试方法test2");
+	}
 }

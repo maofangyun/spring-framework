@@ -244,7 +244,7 @@ public abstract class AopUtils {
 		}
 		classes.addAll(ClassUtils.getAllInterfacesForClassAsSet(targetClass));
 
-		// 对targetClass的所有父类的方法进行匹配
+		// 对targetClass的所有父类的方法进行匹配,只要有一个method能匹配到增强,直接返回true
 		for (Class<?> clazz : classes) {
 			Method[] methods = ReflectionUtils.getAllDeclaredMethods(clazz);
 			for (Method method : methods) {
@@ -287,6 +287,7 @@ public abstract class AopUtils {
 		}
 		else if (advisor instanceof PointcutAdvisor) {
 			PointcutAdvisor pca = (PointcutAdvisor) advisor;
+			// 判断增强和targetClass的所有方法是否能匹配,只要有一个方法能匹配上,就返回true
 			return canApply(pca.getPointcut(), targetClass, hasIntroductions);
 		}
 		else {

@@ -271,15 +271,17 @@ public class ExceptionHandlerExceptionResolver extends AbstractHandlerMethodExce
 		if (getApplicationContext() == null) {
 			return;
 		}
-
+		// 找出@ControllerAdvice注解的bean
 		List<ControllerAdviceBean> adviceBeans = ControllerAdviceBean.findAnnotatedBeans(getApplicationContext());
 		for (ControllerAdviceBean adviceBean : adviceBeans) {
 			Class<?> beanType = adviceBean.getBeanType();
 			if (beanType == null) {
 				throw new IllegalStateException("Unresolvable type for ControllerAdviceBean: " + adviceBean);
 			}
+			// 建立异常类型和方法的映射关系(mappedMethods)
 			ExceptionHandlerMethodResolver resolver = new ExceptionHandlerMethodResolver(beanType);
 			if (resolver.hasExceptionMappings()) {
+				// 建立异常处理类和处理方法封装对象的映射关系
 				this.exceptionHandlerAdviceCache.put(adviceBean, resolver);
 			}
 			if (ResponseBodyAdvice.class.isAssignableFrom(beanType)) {
@@ -377,15 +379,16 @@ public class ExceptionHandlerExceptionResolver extends AbstractHandlerMethodExce
 	@Nullable
 	protected ModelAndView doResolveHandlerMethodException(HttpServletRequest request,
 			HttpServletResponse response, @Nullable HandlerMethod handlerMethod, Exception exception) {
-
+		// 返回封装了异常处理实例bean和待调用的异常处理方法的对象
 		ServletInvocableHandlerMethod exceptionHandlerMethod = getExceptionHandlerMethod(handlerMethod, exception);
 		if (exceptionHandlerMethod == null) {
 			return null;
 		}
-
+		// 添加入参解析器(因为异常处理方法有入参)
 		if (this.argumentResolvers != null) {
 			exceptionHandlerMethod.setHandlerMethodArgumentResolvers(this.argumentResolvers);
 		}
+		// 添加返回值解析器(因为异常处理方法有返回值)
 		if (this.returnValueHandlers != null) {
 			exceptionHandlerMethod.setHandlerMethodReturnValueHandlers(this.returnValueHandlers);
 		}
@@ -399,11 +402,11 @@ public class ExceptionHandlerExceptionResolver extends AbstractHandlerMethodExce
 			}
 			Throwable cause = exception.getCause();
 			if (cause != null) {
-				// Expose cause as provided argument as well
+				// 如果有cause,将cause也作为参数传递到方法中,因此,异常处理类的方法中,可以默认拥有这些入参
 				exceptionHandlerMethod.invokeAndHandle(webRequest, mavContainer, exception, cause, handlerMethod);
 			}
 			else {
-				// Otherwise, just the given exception as-is
+				// 若cause不存在,只传递exception
 				exceptionHandlerMethod.invokeAndHandle(webRequest, mavContainer, exception, handlerMethod);
 			}
 		}
@@ -474,10 +477,13 @@ public class ExceptionHandlerExceptionResolver extends AbstractHandlerMethodExce
 
 		for (Map.Entry<ControllerAdviceBean, ExceptionHandlerMethodResolver> entry : this.exceptionHandlerAdviceCache.entrySet()) {
 			ControllerAdviceBean advice = entry.getKey();
+			// 判断该异常处理器的处理范围是否覆盖handlerType(抛出异常的类)
 			if (advice.isApplicableToBeanType(handlerType)) {
 				ExceptionHandlerMethodResolver resolver = entry.getValue();
+				// 获取异常类型对应的处理方法
 				Method method = resolver.resolveMethod(exception);
 				if (method != null) {
+					// 将实例bean和需要调用的method封装在一起,方便后面的反射调用
 					return new ServletInvocableHandlerMethod(advice.resolveBean(), method);
 				}
 			}

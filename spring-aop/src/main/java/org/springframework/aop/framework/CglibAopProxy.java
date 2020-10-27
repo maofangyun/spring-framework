@@ -664,6 +664,7 @@ class CglibAopProxy implements AopProxy, Serializable {
 			Object oldProxy = null;
 			boolean setProxyContext = false;
 			Object target = null;
+			// advised的类型是ProxyFactory(生成bean的代理类时,new出来的),包含了bean实例和bean匹配的增强
 			TargetSource targetSource = this.advised.getTargetSource();
 			try {
 				if (this.advised.exposeProxy) {

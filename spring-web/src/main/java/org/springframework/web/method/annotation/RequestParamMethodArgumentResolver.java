@@ -131,6 +131,7 @@ public class RequestParamMethodArgumentResolver extends AbstractNamedValueMethod
 				return (requestParam != null && StringUtils.hasText(requestParam.name()));
 			}
 			else {
+				// 这里就是默认用@RequestParam的原因
 				return true;
 			}
 		}

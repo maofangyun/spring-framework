@@ -17,6 +17,9 @@ public class AnnotationACTest {
 		ac.register(BeanConfig.class);
 		ac.refresh();
 		IndexService bean = ac.getBean(IndexService.class);
-		bean.test();
+//		bean.test();
+		bean.test1();
+		System.out.println("++++++++++++++++++++++++++++++++++++++++++");
+		bean.test2();
 	}
 }

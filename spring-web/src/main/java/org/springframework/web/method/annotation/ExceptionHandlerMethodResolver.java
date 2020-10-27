@@ -60,8 +60,11 @@ public class ExceptionHandlerMethodResolver {
 	 * @param handlerType the type to introspect
 	 */
 	public ExceptionHandlerMethodResolver(Class<?> handlerType) {
+		// 获取handlerType中被@ExceptionHandler注解的所有方法
 		for (Method method : MethodIntrospector.selectMethods(handlerType, EXCEPTION_HANDLER_METHODS)) {
+			// 获取method中被@ExceptionHandler注解的所有异常属性(Class)
 			for (Class<? extends Throwable> exceptionType : detectExceptionMappings(method)) {
+				// 建立异常类型和方法的映射关系(mappedMethods)
 				addExceptionMapping(exceptionType, method);
 			}
 		}
@@ -118,6 +121,7 @@ public class ExceptionHandlerMethodResolver {
 	 */
 	@Nullable
 	public Method resolveMethod(Exception exception) {
+		// 获取异常类型对应的处理方法
 		return resolveMethodByThrowable(exception);
 	}
 
@@ -130,6 +134,7 @@ public class ExceptionHandlerMethodResolver {
 	 */
 	@Nullable
 	public Method resolveMethodByThrowable(Throwable exception) {
+		// 获取异常类型对应的处理方法
 		Method method = resolveMethodByExceptionType(exception.getClass());
 		if (method == null) {
 			Throwable cause = exception.getCause();
@@ -150,7 +155,9 @@ public class ExceptionHandlerMethodResolver {
 	public Method resolveMethodByExceptionType(Class<? extends Throwable> exceptionType) {
 		Method method = this.exceptionLookupCache.get(exceptionType);
 		if (method == null) {
+			// 查找exception类型对应的处理方法
 			method = getMappedMethod(exceptionType);
+			// 将异常类型和对应的处理方法的映射关系缓存起来
 			this.exceptionLookupCache.put(exceptionType, method);
 		}
 		return method;
@@ -163,11 +170,13 @@ public class ExceptionHandlerMethodResolver {
 	private Method getMappedMethod(Class<? extends Throwable> exceptionType) {
 		List<Class<? extends Throwable>> matches = new ArrayList<>();
 		for (Class<? extends Throwable> mappedException : this.mappedMethods.keySet()) {
+			// 判断业务抛出的异常类型是否属于mappedException
 			if (mappedException.isAssignableFrom(exceptionType)) {
 				matches.add(mappedException);
 			}
 		}
 		if (!matches.isEmpty()) {
+			// 由于业务抛出的异常类型抛出的异常类型,可能对应有多个异常类的处理方法,所以需要排序,选出一个最合适的返回
 			matches.sort(new ExceptionDepthComparator(exceptionType));
 			return this.mappedMethods.get(matches.get(0));
 		}

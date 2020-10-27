@@ -100,9 +100,11 @@ public final class ModelFactory {
 	 */
 	public void initModel(NativeWebRequest request, ModelAndViewContainer container, HandlerMethod handlerMethod)
 			throws Exception {
-
+		// 根据@SessionAttributes注解中的参数名称,从请求中获取session域中的value
 		Map<String, ?> sessionAttributes = this.sessionAttributesHandler.retrieveAttributes(request);
+		// 将取出的参数,合并到mavContainer中
 		container.mergeAttributes(sessionAttributes);
+		// 执行注释了@ModelAttribute的方法并将结果设置到Model
 		invokeModelAttributeMethods(request, container);
 
 		for (String name : findSessionAttributeArguments(handlerMethod)) {
@@ -124,6 +126,7 @@ public final class ModelFactory {
 			throws Exception {
 
 		while (!this.modelMethods.isEmpty()) {
+			// 返回@ModelAttribute标注的方法封装
 			InvocableHandlerMethod modelMethod = getNextModelMethod(container).getHandlerMethod();
 			ModelAttribute ann = modelMethod.getMethodAnnotation(ModelAttribute.class);
 			Assert.state(ann != null, "No ModelAttribute annotation");
@@ -133,14 +136,16 @@ public final class ModelFactory {
 				}
 				continue;
 			}
-
+			// 反射调用@ModelAttribute标注的方法,将返回的值,放入container中
 			Object returnValue = modelMethod.invokeForRequest(request, container);
 			if (!modelMethod.isVoid()){
+				// 获取@ModelAttribute属性中写的返回值的参数名称
 				String returnValueName = getNameForReturnValue(returnValue, modelMethod.getReturnType());
 				if (!ann.binding()) {
 					container.setBindingDisabled(returnValueName);
 				}
 				if (!container.containsAttribute(returnValueName)) {
+					// 将返回参数的key和value缓存到mavContainer中
 					container.addAttribute(returnValueName, returnValue);
 				}
 			}

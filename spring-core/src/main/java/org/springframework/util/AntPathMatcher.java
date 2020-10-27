@@ -191,6 +191,7 @@ public class AntPathMatcher implements PathMatcher {
 
 	@Override
 	public boolean match(String pattern, String path) {
+		// 判断请求地址和拦截器设定的拦截地址是否匹配
 		return doMatch(pattern, path, true, null);
 	}
 

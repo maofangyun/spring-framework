@@ -145,6 +145,7 @@ public class HandlerMethod {
 		this.bridgedMethod = BridgeMethodResolver.findBridgedMethod(method);
 		// 初始化方法参数(创建对应大小的参数数组)
 		this.parameters = initMethodParameters();
+		// 处理@ResponseStatus注解
 		evaluateResponseStatus();
 		this.description = initDescription(this.beanType, this.method);
 	}
@@ -334,8 +335,10 @@ public class HandlerMethod {
 		if (this.bean instanceof String) {
 			Assert.state(this.beanFactory != null, "Cannot resolve bean name without BeanFactory");
 			String beanName = (String) this.bean;
+			// 从beanFactory获取beanName对应的实例
 			handler = this.beanFactory.getBean(beanName);
 		}
+		// 将实例加入HandlerMethod,为后面反射调用做准备
 		return new HandlerMethod(this, handler);
 	}
 

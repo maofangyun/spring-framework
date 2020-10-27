@@ -52,8 +52,9 @@ public class ModelAndViewContainer {
 	private boolean ignoreDefaultModelOnRedirect = false;
 
 	@Nullable
+	// 视图主要保存jsp文件的位置和content-type
 	private Object view;
-
+	// 保存页面中需要用到的kv键值对
 	private final ModelMap defaultModel = new BindingAwareModelMap();
 
 	@Nullable

@@ -48,10 +48,12 @@ public class ModelAndView {
 
 	/** View instance or view name String. */
 	@Nullable
+	// 视图主要保存jsp文件的位置和content-type
 	private Object view;
 
 	/** Model Map. */
 	@Nullable
+	// 保存页面中需要用到的kv键值对
 	private ModelMap model;
 
 	/** Optional HTTP status for the response. */

@@ -138,10 +138,13 @@ public class HandlerExecutionChain {
 		if (!ObjectUtils.isEmpty(interceptors)) {
 			for (int i = 0; i < interceptors.length; i++) {
 				HandlerInterceptor interceptor = interceptors[i];
+				// 调用拦截器的前置处理器preHandle()
 				if (!interceptor.preHandle(request, response, this.handler)) {
+					// 当前置处理器拦截了请求(即返回false),还需要调用拦截器的完成处理器afterCompletion()
 					triggerAfterCompletion(request, response, null);
 					return false;
 				}
+				// 记录目前调用的哪一个拦截器
 				this.interceptorIndex = i;
 			}
 		}
@@ -173,6 +176,7 @@ public class HandlerExecutionChain {
 
 		HandlerInterceptor[] interceptors = getInterceptors();
 		if (!ObjectUtils.isEmpty(interceptors)) {
+			// 注意:这里是反向遍历调用的
 			for (int i = this.interceptorIndex; i >= 0; i--) {
 				HandlerInterceptor interceptor = interceptors[i];
 				try {
