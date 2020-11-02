@@ -133,12 +133,12 @@ final class PostProcessorRegistrationDelegate {
 			// 遍历BeanDefinitionRegistryPostProcessor实现类,调用postProcessBeanFactory()
 			// 对于ConfigurationClassPostProcessor,生成“配置”类(@Configuration)的代理类
 			invokeBeanFactoryPostProcessors(registryProcessors, beanFactory);
-			// 遍历非BeanDefinitionRegistryPostProcessor实现类,调用postProcessBeanFactory()
+			// 遍历非BeanDefinitionRegistryPostProcessor实现类(自己加进来的),调用postProcessBeanFactory(),基本不会执行
 			invokeBeanFactoryPostProcessors(regularPostProcessors, beanFactory);
 		}
 
 		else {
-			// Invoke factory processors registered with the context instance.
+			// 遍历非BeanDefinitionRegistryPostProcessor实现类(自己加进来的),调用postProcessBeanFactory(),基本不会执行
 			invokeBeanFactoryPostProcessors(beanFactoryPostProcessors, beanFactory);
 		}
 

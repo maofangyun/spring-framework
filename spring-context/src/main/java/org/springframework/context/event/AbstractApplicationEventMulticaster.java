@@ -193,8 +193,10 @@ public abstract class AbstractApplicationEventMulticaster
 					return retriever.getApplicationListeners();
 				}
 				retriever = new ListenerRetriever(true);
+				// 根据eventType,匹配到合适的监听器
 				Collection<ApplicationListener<?>> listeners =
 						retrieveApplicationListeners(eventType, sourceType, retriever);
+				// 缓存事件类型和监听器集合之间的映射关系
 				this.retrieverCache.put(cacheKey, retriever);
 				return listeners;
 			}
@@ -226,6 +228,8 @@ public abstract class AbstractApplicationEventMulticaster
 		// Add programmatically registered listeners, including ones coming
 		// from ApplicationListenerDetector (singleton beans and inner beans).
 		for (ApplicationListener<?> listener : listeners) {
+			// 根据eventType类型,判断listener是否匹配此事件类型
+			// 注意点:若eventType是泛型,必返回true
 			if (supportsEvent(listener, eventType, sourceType)) {
 				if (retriever != null) {
 					retriever.applicationListeners.add(listener);

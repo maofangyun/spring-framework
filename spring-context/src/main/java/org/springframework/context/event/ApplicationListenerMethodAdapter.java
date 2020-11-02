@@ -150,6 +150,7 @@ public class ApplicationListenerMethodAdapter implements GenericApplicationListe
 
 	@Override
 	public void onApplicationEvent(ApplicationEvent event) {
+		// 广播事件
 		processEvent(event);
 	}
 
@@ -166,6 +167,7 @@ public class ApplicationListenerMethodAdapter implements GenericApplicationListe
 				}
 			}
 		}
+		// 这里基本都会返回false(当eventType属于泛型时,返回true,即CustomEvent<?>)
 		return eventType.hasUnresolvableGenerics();
 	}
 
@@ -185,10 +187,16 @@ public class ApplicationListenerMethodAdapter implements GenericApplicationListe
 	 * matches and handling a non-null result, if any.
 	 */
 	public void processEvent(ApplicationEvent event) {
+		// 获取@EventListener注解方法的入参,
+		// 若event的事件类型和入参类型不一致,返回null,若一致,返回event本身
 		Object[] args = resolveArguments(event);
+		// 判断event是否匹配@EventListener的各项条件
 		if (shouldHandle(event, args)) {
+			// 反射调用@EventListener注解标注的方法
 			Object result = doInvoke(args);
 			if (result != null) {
+				// 处理返回值,不同的返回值类型,有不同的处理逻辑,最后都是包装成事件类型重新发布
+				// 对于非ApplicationEvent类型的,会包装成PayloadApplicationEvent
 				handleResult(result);
 			}
 			else {
@@ -205,6 +213,7 @@ public class ApplicationListenerMethodAdapter implements GenericApplicationListe
 	 */
 	@Nullable
 	protected Object[] resolveArguments(ApplicationEvent event) {
+		// 判断event类型,是否和方法中的入参类型一致
 		ResolvableType declaredEventType = getResolvableType(event);
 		if (declaredEventType == null) {
 			return null;
@@ -294,6 +303,7 @@ public class ApplicationListenerMethodAdapter implements GenericApplicationListe
 	 */
 	@Nullable
 	protected Object doInvoke(Object... args) {
+		// 从容器中获取当前待调用方法所在的bean
 		Object bean = getTargetBean();
 		// Detect package-protected NullBean instance through equals(null) check
 		if (bean.equals(null)) {
@@ -302,6 +312,7 @@ public class ApplicationListenerMethodAdapter implements GenericApplicationListe
 
 		ReflectionUtils.makeAccessible(this.method);
 		try {
+			// 反射调用@EventListener注解标注的方法
 			return this.method.invoke(bean, args);
 		}
 		catch (IllegalArgumentException ex) {
@@ -401,6 +412,7 @@ public class ApplicationListenerMethodAdapter implements GenericApplicationListe
 				payloadType = eventType.as(PayloadApplicationEvent.class).getGeneric();
 			}
 		}
+		// 判断传入的event类型,是否和方法中的入参declaredEventTypes类型一致
 		for (ResolvableType declaredEventType : this.declaredEventTypes) {
 			Class<?> eventClass = declaredEventType.toClass();
 			if (!ApplicationEvent.class.isAssignableFrom(eventClass) &&

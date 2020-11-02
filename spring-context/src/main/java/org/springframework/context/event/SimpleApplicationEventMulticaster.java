@@ -136,6 +136,7 @@ public class SimpleApplicationEventMulticaster extends AbstractApplicationEventM
 				executor.execute(() -> invokeListener(listener, event));
 			}
 			else {
+				// 反射调用监听器
 				invokeListener(listener, event);
 			}
 		}

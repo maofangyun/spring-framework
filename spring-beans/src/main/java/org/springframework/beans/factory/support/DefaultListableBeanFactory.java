@@ -912,6 +912,8 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 					}, getAccessControlContext());
 				}
 				else {
+					// 所有的单例bean实例化完成之后,进行某些操作,扩展点
+					// 例如,解析bean中所有标注了@EventListener注解的方法
 					smartSingleton.afterSingletonsInstantiated();
 				}
 			}

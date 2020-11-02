@@ -131,6 +131,7 @@ public class EventListenerMethodProcessor
 						}
 					}
 					try {
+						// 处理@EventListener注解
 						processBean(beanName, type);
 					}
 					catch (Throwable ex) {
@@ -149,6 +150,7 @@ public class EventListenerMethodProcessor
 
 			Map<Method, EventListener> annotatedMethods = null;
 			try {
+				// key=标注了@EventListener注解的方法,value=@EventListener的属性
 				annotatedMethods = MethodIntrospector.selectMethods(targetType,
 						(MethodIntrospector.MetadataLookup<EventListener>) method ->
 								AnnotatedElementUtils.findMergedAnnotation(method, EventListener.class));
@@ -174,14 +176,18 @@ public class EventListenerMethodProcessor
 				Assert.state(factories != null, "EventListenerFactory List not initialized");
 				for (Method method : annotatedMethods.keySet()) {
 					for (EventListenerFactory factory : factories) {
-						if (factory.supportsMethod(method)) {
+						if (factory.supportsMethod(method)) {	// DefaultEventListenerFactory类型的factory,直接返回true
+							// 返回可调用的方法,不允许访问私有方法&&静态方法&&代理方法
 							Method methodToUse = AopUtils.selectInvocableMethod(method, context.getType(beanName));
+							// 将@EventListener标注的方法,采用适配器模式转换成监听器(ApplicationListenerMethodAdapter)
 							ApplicationListener<?> applicationListener =
 									factory.createApplicationListener(beanName, targetType, methodToUse);
 							if (applicationListener instanceof ApplicationListenerMethodAdapter) {
 								((ApplicationListenerMethodAdapter) applicationListener).init(context, this.evaluator);
 							}
+							// 将监听器加入到容器中
 							context.addApplicationListener(applicationListener);
+							// 一个监听器,只能加入一个容器
 							break;
 						}
 					}
