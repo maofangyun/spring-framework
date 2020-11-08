@@ -309,6 +309,7 @@ class ConfigurationClassParser {
 		}
 
 		// 处理@Import注解,给configClass加入ImportBeanDefinitionRegistrar,后续会调用
+		// getImports(),遍历并递归获取sourceClass的所有注解中包含@import注解的value值
 		processImports(configClass, sourceClass, getImports(sourceClass), filter, true);
 
 		// 处理@ImportResource注解
@@ -566,15 +567,20 @@ class ConfigurationClassParser {
 			this.importStack.push(configClass);
 			try {
 				for (SourceClass candidate : importCandidates) {
+					// 若@Import标注的类,实现了ImportSelector接口,可以加载更多的beanDefinition进来
 					if (candidate.isAssignable(ImportSelector.class)) {
 						// Candidate class is an ImportSelector -> delegate to it to determine imports
 						Class<?> candidateClass = candidate.loadClass();
+						// 直接实例化ImportSelector
 						ImportSelector selector = ParserStrategyUtils.instantiateClass(candidateClass, ImportSelector.class,
 								this.environment, this.resourceLoader, this.registry);
 						Predicate<String> selectorFilter = selector.getExclusionFilter();
 						if (selectorFilter != null) {
 							exclusionFilter = exclusionFilter.or(selectorFilter);
 						}
+						// 重点: @SpringBootApplication注解的@EnableAutoConfiguration会@Import(AutoConfigurationImportSelector.class),
+						// 而AutoConfigurationImportSelector就属于DeferredImportSelector的实现类
+						// 将加载META-INF/spring.factories文件中配置的所有类,变成beanDefinition放入到容器中
 						if (selector instanceof DeferredImportSelector) {
 							this.deferredImportSelectorHandler.handle(configClass, (DeferredImportSelector) selector);
 						}

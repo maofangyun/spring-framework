@@ -148,6 +148,7 @@ class ConfigurationClassBeanDefinitionReader {
 		// 将@ImportResource注解标注的资源文件引入spring
 		loadBeanDefinitionsFromImportedResources(configClass.getImportedResources());
 		// 将@Import注解标注的类，变成BeanDefinition注册到map中,调用ImportBeanDefinitionRegistrar
+		// 例如,springboot中的AutoConfigurationPackages.Registrar,会注册一个AutoConfigurationPackages的beanDefinition
 		loadBeanDefinitionsFromRegistrars(configClass.getImportBeanDefinitionRegistrars());
 	}
 
