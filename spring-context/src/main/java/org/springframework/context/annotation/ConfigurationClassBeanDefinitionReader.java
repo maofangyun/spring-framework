@@ -138,6 +138,7 @@ class ConfigurationClassBeanDefinitionReader {
 		}
 
 		if (configClass.isImported()) {
+			// 将@Import注解标注的类，变成BeanDefinition注册到map中
 			registerBeanDefinitionForImportedConfigurationClass(configClass);
 		}
 		// 循环所有注解有@Bean的方法，生成@Bean注解返回对象的代理beanDefinition，并注册到容器中
@@ -162,6 +163,7 @@ class ConfigurationClassBeanDefinitionReader {
 		ScopeMetadata scopeMetadata = scopeMetadataResolver.resolveScopeMetadata(configBeanDef);
 		configBeanDef.setScope(scopeMetadata.getScopeName());
 		String configBeanName = this.importBeanNameGenerator.generateBeanName(configBeanDef, this.registry);
+		// 处理解析@Lazy,@Primary,@DependsOn,@Role,@Description
 		AnnotationConfigUtils.processCommonDefinitionAnnotations(configBeanDef, metadata);
 
 		BeanDefinitionHolder definitionHolder = new BeanDefinitionHolder(configBeanDef, configBeanName);
