@@ -1,12 +1,14 @@
 package com.mfy.test.bean;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Import;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 
 @Service
+@Import(ConstructorArgBean.class)
 public class ConstructorAutowiredBean {
 
 	public Student getStudent() {

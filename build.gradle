@@ -12,6 +12,14 @@ plugins {
 	id "com.github.ben-manes.versions" version '0.24.0'
 }
 
+repositories {
+	mavenLocal()
+	mavenCentral()
+}
+checkstyle {
+	ignoreFailures = true
+}
+
 apply from: "$rootDir/gradle/build-scan-user-data.gradle"
 ext {
 	moduleProjects = subprojects.findAll { it.name.startsWith("spring-") }
@@ -278,7 +286,7 @@ configure(allprojects) { project ->
 		}
 		repositories {
 			mavenLocal()
-			maven { url "http://maven.aliyun.com/nexus/content/groups/public/" }
+			maven { url "https://maven.aliyun.com/nexus/content/groups/public/" }
 		}
 	}
 	configurations.all {

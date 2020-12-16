@@ -68,7 +68,7 @@ public class UserController {
 	 *  headers： 指定request中必须包含某些指定的header值，才能让该方法处理请求。
 	 *  media type
 	 * */
-	@RequestMapping(value = "/getUser", method = RequestMethod.GET, params = "username=jack", headers = "Referer=http://www.xx.com/")
+	@RequestMapping(value = "/getUser", method = RequestMethod.GET, params = "username=jack", headers = "Referer=https://www.xx.com/")
 	public @ResponseBody String getUser(HttpSession session, OutputStream outputStream) {
 		return "xx";
 	}

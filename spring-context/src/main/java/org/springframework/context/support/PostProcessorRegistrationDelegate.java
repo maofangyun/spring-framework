@@ -57,11 +57,13 @@ final class PostProcessorRegistrationDelegate {
 			ConfigurableListableBeanFactory beanFactory, List<BeanFactoryPostProcessor> beanFactoryPostProcessors) {
 
 		// Invoke BeanDefinitionRegistryPostProcessors first, if any.
+		// 已经完成调用的后置处理器集合
 		Set<String> processedBeans = new HashSet<>();
 
 		if (beanFactory instanceof BeanDefinitionRegistry) {
 			BeanDefinitionRegistry registry = (BeanDefinitionRegistry) beanFactory;
 			List<BeanFactoryPostProcessor> regularPostProcessors = new ArrayList<>();
+			// 存储所有的BeanDefinitionRegistryPostProcessor接口实现类
 			List<BeanDefinitionRegistryPostProcessor> registryProcessors = new ArrayList<>();
 			// 此处的循环基本不会进来
 			for (BeanFactoryPostProcessor postProcessor : beanFactoryPostProcessors) {
@@ -112,6 +114,8 @@ final class PostProcessorRegistrationDelegate {
 
 
 			// 死循环获取其他所有的BeanDefinitionRegistryPostProcessor实现类,排序之后,按顺序调用
+			// 死循环BeanDefinitionRegistryPostProcessor实现类的原因是,前面的BeanDefinitionRegistryPostProcessor可能会注入新的实现类,
+			// 所以必须重新再获取并调用一遍
 			boolean reiterate = true;
 			while (reiterate) {
 				reiterate = false;

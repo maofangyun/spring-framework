@@ -523,6 +523,7 @@ class ConfigurationClassParser {
 	private Set<SourceClass> getImports(SourceClass sourceClass) throws IOException {
 		Set<SourceClass> imports = new LinkedHashSet<>();
 		Set<SourceClass> visited = new LinkedHashSet<>();
+		// 收集sourceClass中@Import注解的value值
 		collectImports(sourceClass, imports, visited);
 		return imports;
 	}
@@ -807,7 +808,10 @@ class ConfigurationClassParser {
 		private final Map<AnnotationMetadata, ConfigurationClass> configurationClasses = new HashMap<>();
 
 		public void register(DeferredImportSelectorHolder deferredImport) {
+			// 返回AutoConfigurationGroup.class
 			Class<? extends Group> group = deferredImport.getImportSelector().getImportGroup();
+			// groupings的key = group(SpringBoot中就是固定的)
+			// value = DeferredImportSelectorGrouping(createGroup(group)),封装了deferredImport和Entry
 			DeferredImportSelectorGrouping grouping = this.groupings.computeIfAbsent(
 					(group != null ? group : deferredImport),
 					key -> new DeferredImportSelectorGrouping(createGroup(group)));
@@ -895,7 +899,7 @@ class ConfigurationClassParser {
 				this.group.process(deferredImport.getConfigurationClass().getMetadata(),
 						deferredImport.getImportSelector());
 			}
-			// 返回@Import中的类和与之关联的配置类的注解元信息
+			// 返回@Import中类全限定名称和与之关联的配置类的注解元信息的封装对象(Entry)
 			return this.group.selectImports();
 		}
 
