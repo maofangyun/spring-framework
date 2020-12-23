@@ -96,7 +96,7 @@ public abstract class AbstractFallbackTransactionAttributeSource implements Tran
 
 		// First, see if we have a cached value.
 		Object cacheKey = getCacheKey(method, targetClass);
-		// 当AOP给targetClass匹配增强,调用findAdvisorsThatCanApply()时,最终会调用到这里,给attributeCache的赋值
+		// 当AOP给targetClass匹配通知器,调用findAdvisorsThatCanApply()时,最终会调用到这里,给attributeCache的赋值
 		TransactionAttribute cached = this.attributeCache.get(cacheKey);
 		if (cached != null) {
 			// Value will either be canonical value indicating there is no transaction attribute,

@@ -122,9 +122,9 @@ public class ReflectiveAspectJAdvisorFactory extends AbstractAspectJAdvisorFacto
 				new LazySingletonAspectInstanceFactoryDecorator(aspectInstanceFactory);
 
 		List<Advisor> advisors = new ArrayList<>();
-		// getAdvisorMethods(aspectClass),获取aspectClass中所有没有被@Pointcut标注的方法
+		// getAdvisorMethods(aspectClass):获取aspectClass中所有没有被@Pointcut标注的方法
 		for (Method method : getAdvisorMethods(aspectClass)) {
-			// 获取method是否为增强,若不是返回null，是返回Advisor
+			// 获取method是否为通知器,若不是返回null，是返回Advisor
 			Advisor advisor = getAdvisor(method, lazySingletonAspectInstanceFactory, advisors.size(), aspectName);
 			if (advisor != null) {
 				advisors.add(advisor);
@@ -228,7 +228,7 @@ public class ReflectiveAspectJAdvisorFactory extends AbstractAspectJAdvisorFacto
 
 		Class<?> candidateAspectClass = aspectInstanceFactory.getAspectMetadata().getAspectClass();
 		validate(candidateAspectClass);
-		// 获取candidateAdviceMethod上的增强注解
+		// 获取candidateAdviceMethod上的通知注解
 		AspectJAnnotation<?> aspectJAnnotation =
 				AbstractAspectJAdvisorFactory.findAspectJAnnotationOnMethod(candidateAdviceMethod);
 		if (aspectJAnnotation == null) {
@@ -249,6 +249,7 @@ public class ReflectiveAspectJAdvisorFactory extends AbstractAspectJAdvisorFacto
 
 		AbstractAspectJAdvice springAdvice;
 
+		// 根据注解的类型,创建不同的通知
 		switch (aspectJAnnotation.getAnnotationType()) {
 			case AtPointcut:
 				if (logger.isDebugEnabled()) {

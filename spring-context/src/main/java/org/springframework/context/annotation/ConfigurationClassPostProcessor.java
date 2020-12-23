@@ -255,6 +255,7 @@ public class ConfigurationClassPostProcessor implements BeanDefinitionRegistryPo
 		}
 		// 生成@Configuration注解的类的代理类的BeanDefinition，并加入beanDefinitionMap
 		enhanceConfigurationClasses(beanFactory);
+		// 注册处理ImportAware接口的后置处理器
 		beanFactory.addBeanPostProcessor(new ImportAwareBeanPostProcessor(beanFactory));
 	}
 

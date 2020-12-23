@@ -109,10 +109,10 @@ public class BeanFactoryAspectJAdvisorsBuilder {
 							if (amd.getAjType().getPerClause().getKind() == PerClauseKind.SINGLETON) {
 								MetadataAwareAspectInstanceFactory factory =
 										new BeanFactoryAspectInstanceFactory(this.beanFactory, beanName);
-								// 获取beanName对应类中的所有增强
+								// 获取beanName对应类中的所有通知器
 								List<Advisor> classAdvisors = this.advisorFactory.getAdvisors(factory);
 								if (this.beanFactory.isSingleton(beanName)) {
-									// 缓存每个切面类和增强的映射关系
+									// 缓存每个切面类beanName和对应通知器集合的映射关系
 									this.advisorsCache.put(beanName, classAdvisors);
 								}
 								else {

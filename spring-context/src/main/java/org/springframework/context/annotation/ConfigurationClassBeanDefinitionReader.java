@@ -148,7 +148,7 @@ class ConfigurationClassBeanDefinitionReader {
 
 		// 将@ImportResource注解标注的资源文件引入spring
 		loadBeanDefinitionsFromImportedResources(configClass.getImportedResources());
-		// 将@Import注解标注的类，变成BeanDefinition注册到map中,调用ImportBeanDefinitionRegistrar
+		// 调用ImportBeanDefinitionRegistrar的registerBeanDefinitions()方法(作用是注册新的beanDefinition)
 		// 例如,springboot中的AutoConfigurationPackages.Registrar,会注册一个AutoConfigurationPackages的beanDefinition
 		loadBeanDefinitionsFromRegistrars(configClass.getImportBeanDefinitionRegistrars());
 	}
@@ -168,6 +168,7 @@ class ConfigurationClassBeanDefinitionReader {
 
 		BeanDefinitionHolder definitionHolder = new BeanDefinitionHolder(configBeanDef, configBeanName);
 		definitionHolder = AnnotationConfigUtils.applyScopedProxyMode(scopeMetadata, definitionHolder, this.registry);
+		// 将@Import中指定的Class对象,注册到容器中
 		this.registry.registerBeanDefinition(definitionHolder.getBeanName(), definitionHolder.getBeanDefinition());
 		configClass.setBeanName(configBeanName);
 

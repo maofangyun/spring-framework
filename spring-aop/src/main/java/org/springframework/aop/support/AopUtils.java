@@ -224,6 +224,7 @@ public abstract class AopUtils {
 	public static boolean canApply(Pointcut pc, Class<?> targetClass, boolean hasIntroductions) {
 		Assert.notNull(pc, "Pointcut must not be null");
 		// 判断Pointcut是否匹配targetClass
+		// 对于事务的Pointcut,底层的逻辑是匹配targetClass的方法中是否有@Transactional注解
 		if (!pc.getClassFilter().matches(targetClass)) {
 			return false;
 		}
@@ -245,7 +246,7 @@ public abstract class AopUtils {
 		}
 		classes.addAll(ClassUtils.getAllInterfacesForClassAsSet(targetClass));
 
-		// 对targetClass的所有父类的方法进行匹配,只要有一个method能匹配到增强,直接返回true
+		// 对targetClass的所有父类的方法进行匹配,只要有一个method能匹配到通知,直接返回true
 		for (Class<?> clazz : classes) {
 			Method[] methods = ReflectionUtils.getAllDeclaredMethods(clazz);
 			for (Method method : methods) {
@@ -288,7 +289,7 @@ public abstract class AopUtils {
 		}
 		else if (advisor instanceof PointcutAdvisor) {
 			PointcutAdvisor pca = (PointcutAdvisor) advisor;
-			// 判断增强和targetClass的所有方法是否能匹配,只要有一个方法能匹配上,就返回true
+			// 判断通知和targetClass的所有方法是否能匹配,只要有一个方法能匹配上,就返回true
 			return canApply(pca.getPointcut(), targetClass, hasIntroductions);
 		}
 		else {
@@ -321,6 +322,7 @@ public abstract class AopUtils {
 				// already processed
 				continue;
 			}
+			// 判断通知器Advisor(用PointCut)和clazz是否匹配
 			if (canApply(candidate, clazz, hasIntroductions)) {
 				eligibleAdvisors.add(candidate);
 			}

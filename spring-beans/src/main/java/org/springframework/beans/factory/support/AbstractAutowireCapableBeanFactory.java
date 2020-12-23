@@ -501,7 +501,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 
 		try {
 			// 实例化bean,若有代理,则返回代理对象
-			// TODO 此处的作用?
+			// 实例化前,调用beanPostProcessor的前置方法postProcessBeforeInstantiation()
 			Object bean = resolveBeforeInstantiation(beanName, mbdToUse);
 			if (bean != null) {
 				return bean;
@@ -1459,7 +1459,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 			}
 			checkDependencies(beanName, mbd, filteredPds, pvs);
 		}
-		// 过时了,不要看
+		// 过时了,不要看(当PropertyValue的value是beanDefinition时,会在这里进行实例化,并将实例化的对象注入属性中)
 		if (pvs != null) {
 			applyPropertyValues(beanName, mbd, bw, pvs);
 		}

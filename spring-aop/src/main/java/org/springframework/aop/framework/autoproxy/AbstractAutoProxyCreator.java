@@ -235,6 +235,7 @@ public abstract class AbstractAutoProxyCreator extends ProxyProcessorSupport
 
 	@Override
 	public Object getEarlyBeanReference(Object bean, String beanName) {
+		// 当beanClass是FactoryBean接口的实现类时,返回&+beanName
 		Object cacheKey = getCacheKey(bean.getClass(), beanName);
 		// earlyProxyReferences被用来防止多次创建同一个target的代理对象
 		// 例如A和B循环依赖时,A和B都被代理的情况,此方法会与postProcessAfterInitialization()都返回代理对象
@@ -245,14 +246,18 @@ public abstract class AbstractAutoProxyCreator extends ProxyProcessorSupport
 
 	@Override
 	public Object postProcessBeforeInstantiation(Class<?> beanClass, String beanName) {
+		// 当beanClass是FactoryBean接口的实现类时,返回&+beanName
 		Object cacheKey = getCacheKey(beanClass, beanName);
 
 		if (!StringUtils.hasLength(beanName) || !this.targetSourcedBeans.contains(beanName)) {
 			if (this.advisedBeans.containsKey(cacheKey)) {
 				return null;
 			}
-			// shouldSkip()的是适用于当前bean的Advisor的Aspect对象
+			// Advisor=Pointcut+Advice
+			// isInfrastructureClass():当beanClass是Advice,Pointcut,Advisor和AopInfrastructureBean接口的实现类时,返回true
+			// shouldSkip()作用:判断beanClass是否应该跳过代理
 			if (isInfrastructureClass(beanClass) || shouldSkip(beanClass, beanName)) {
+				// 缓存bean是否已经进行了通知器查找的处理,当value=true,表示已经生成了通知器的代理对象
 				this.advisedBeans.put(cacheKey, Boolean.FALSE);
 				return null;
 			}
@@ -298,6 +303,7 @@ public abstract class AbstractAutoProxyCreator extends ProxyProcessorSupport
 	@Override
 	public Object postProcessAfterInitialization(@Nullable Object bean, String beanName) {
 		if (bean != null) {
+			// 当beanClass是FactoryBean接口的实现类时,返回&+beanName
 			Object cacheKey = getCacheKey(bean.getClass(), beanName);
 			if (this.earlyProxyReferences.remove(cacheKey) != bean) {
 				return wrapIfNecessary(bean, beanName, cacheKey);
@@ -342,12 +348,14 @@ public abstract class AbstractAutoProxyCreator extends ProxyProcessorSupport
 		if (Boolean.FALSE.equals(this.advisedBeans.get(cacheKey))) {
 			return bean;
 		}
+		// isInfrastructureClass():当beanClass是Advice,Pointcut,Advisor和AopInfrastructureBean接口的实现类时,返回true
+		// shouldSkip()作用:判断beanClass是否应该跳过代理
 		if (isInfrastructureClass(bean.getClass()) || shouldSkip(bean.getClass(), beanName)) {
 			this.advisedBeans.put(cacheKey, Boolean.FALSE);
 			return bean;
 		}
 
-		// 获取bean对应的增强
+		// 获取bean对应的通知器
 		Object[] specificInterceptors = getAdvicesAndAdvisorsForBean(bean.getClass(), beanName, null);
 		if (specificInterceptors != DO_NOT_PROXY) {
 			this.advisedBeans.put(cacheKey, Boolean.TRUE);
@@ -374,6 +382,7 @@ public abstract class AbstractAutoProxyCreator extends ProxyProcessorSupport
 	 * @see #shouldSkip
 	 */
 	protected boolean isInfrastructureClass(Class<?> beanClass) {
+		// Advisor=Pointcut+Advice
 		boolean retVal = Advice.class.isAssignableFrom(beanClass) ||
 				Pointcut.class.isAssignableFrom(beanClass) ||
 				Advisor.class.isAssignableFrom(beanClass) ||
@@ -461,7 +470,7 @@ public abstract class AbstractAutoProxyCreator extends ProxyProcessorSupport
 				evaluateProxyInterfaces(beanClass, proxyFactory);
 			}
 		}
-		// 代理工厂有被代理类的所有增强引用
+		// 代理工厂有被代理类的所有通知器引用
 		Advisor[] advisors = buildAdvisors(beanName, specificInterceptors);
 		proxyFactory.addAdvisors(advisors);
 		proxyFactory.setTargetSource(targetSource);

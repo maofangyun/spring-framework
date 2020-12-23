@@ -152,6 +152,7 @@ public abstract class TransactionSynchronizationManager {
 	private static Object doGetResource(Object actualKey) {
 		// resources这个ThreadLocal变量中,保存了数据库线程池对象和连接对象的映射关系,
 		// 由于ThreadLocal的特性,也保存了线程和连接对象的映射关系
+		// resources.get()取出来是map,因为一个事务中可能需要连接多个数据库,存在多个数据源
 		Map<Object, Object> map = resources.get();
 		if (map == null) {
 			return null;

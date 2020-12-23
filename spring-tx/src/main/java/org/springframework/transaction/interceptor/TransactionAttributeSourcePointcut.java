@@ -93,6 +93,7 @@ abstract class TransactionAttributeSourcePointcut extends StaticMethodMatcherPoi
 				return false;
 			}
 			TransactionAttributeSource tas = getTransactionAttributeSource();
+			// 查看clazz类中是否有方法被@Transactional注解标注,用于canApply()方法的匹配(假的,其实啥都没有判断)
 			return (tas == null || tas.isCandidateClass(clazz));
 		}
 	}

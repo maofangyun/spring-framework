@@ -82,7 +82,7 @@ public class DefaultAdvisorAdapterRegistry implements AdvisorAdapterRegistry, Se
 		if (advice instanceof MethodInterceptor) {
 			interceptors.add((MethodInterceptor) advice);
 		}
-		// 将@Before,@AfterReturning和@AfterThrowing注解标注的增强,包装转换成MethodInterceptor接口的实现类
+		// 将@Before,@AfterReturning和@AfterThrowing注解所代表的通知,包装转换成MethodInterceptor接口的实现类
 		for (AdvisorAdapter adapter : this.adapters) {
 			if (adapter.supportsAdvice(advice)) {
 				// 适配器设计模式,转换成MethodInterceptor接口的实现类

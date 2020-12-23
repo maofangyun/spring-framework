@@ -73,7 +73,7 @@ public class DefaultAdvisorChainFactory implements AdvisorChainFactory, Serializ
 						match = ((IntroductionAwareMethodMatcher) mm).matches(method, actualClass, hasIntroductions);
 					}
 					else {
-						// 判断method是否能匹配该增强advisor
+						// 判断method是否能匹配该通知器advisor
 						match = mm.matches(method, actualClass);
 					}
 					if (match) {

@@ -126,10 +126,12 @@ public abstract class AutoProxyUtils {
 	 * @see AutowireCapableBeanFactory#ORIGINAL_INSTANCE_SUFFIX
 	 */
 	static boolean isOriginalInstance(String beanName, Class<?> beanClass) {
+		// 当想要直接返回实例对象,而不是代理对象,将beanName设置为这样的形式:com.mfy.test.tx.TransConfig.ORIGINAL
 		if (!StringUtils.hasLength(beanName) || beanName.length() !=
 				beanClass.getName().length() + AutowireCapableBeanFactory.ORIGINAL_INSTANCE_SUFFIX.length()) {
 			return false;
 		}
+		// 当想要直接返回实例对象,而不是代理对象,将beanName设置为这样的形式:com.mfy.test.tx.TransConfig.ORIGINAL
 		return (beanName.startsWith(beanClass.getName()) &&
 				beanName.endsWith(AutowireCapableBeanFactory.ORIGINAL_INSTANCE_SUFFIX));
 	}
