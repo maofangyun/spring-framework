@@ -3,14 +3,37 @@ package com.mfy.test.tx;
 
 import org.springframework.jdbc.datasource.lookup.AbstractRoutingDataSource;
 
+import javax.sql.DataSource;
+import java.util.Map;
+
 public class DynamicDataSource extends AbstractRoutingDataSource {
 
 
-    @Override
-    protected Object determineCurrentLookupKey() {
-        String ds = "ds1";
+	private static final ThreadLocal<String> CONTEXT_HOLDER = new ThreadLocal<>();
 
-        System.out.println("=========选择的数据源：" + ds);
-        return ds;
-    }
+	/**
+	 * 配置DataSource, defaultTargetDataSource为主数据库
+	 */
+	public DynamicDataSource(DataSource defaultTargetDataSource, Map<Object, Object> targetDataSources) {
+		super.setDefaultTargetDataSource(defaultTargetDataSource);
+		super.setTargetDataSources(targetDataSources);
+		super.afterPropertiesSet();
+	}
+
+	@Override
+	protected Object determineCurrentLookupKey() {
+		return getDataSource();
+	}
+
+	public static void setDataSource(String dataSource) {
+		CONTEXT_HOLDER.set(dataSource);
+	}
+
+	public static String getDataSource() {
+		return CONTEXT_HOLDER.get();
+	}
+
+	public static void clearDataSource() {
+		CONTEXT_HOLDER.remove();
+	}
 }

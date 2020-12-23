@@ -109,7 +109,7 @@ public abstract class AbstractFallbackTransactionAttributeSource implements Tran
 			}
 		}
 		else {
-			// 获取方法上的@Transactional注解信息,排除掉method的属性为private
+			// 获取方法上的@Transactional注解信息(TransactionAttribute封装),排除掉method的属性为private
 			TransactionAttribute txAttr = computeTransactionAttribute(method, targetClass);
 			// Put it in the cache.
 			if (txAttr == null) {

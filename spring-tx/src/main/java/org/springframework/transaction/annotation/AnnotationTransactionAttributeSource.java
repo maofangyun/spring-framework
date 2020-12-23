@@ -93,6 +93,7 @@ public class AnnotationTransactionAttributeSource extends AbstractFallbackTransa
 		this.publicMethodsOnly = publicMethodsOnly;
 		if (jta12Present || ejb3Present) {
 			this.annotationParsers = new LinkedHashSet<>(4);
+			// 注册@Transactional注解的解析器
 			this.annotationParsers.add(new SpringTransactionAnnotationParser());
 			if (jta12Present) {
 				this.annotationParsers.add(new JtaTransactionAnnotationParser());
@@ -140,6 +141,7 @@ public class AnnotationTransactionAttributeSource extends AbstractFallbackTransa
 	@Override
 	public boolean isCandidateClass(Class<?> targetClass) {
 		for (TransactionAnnotationParser parser : this.annotationParsers) {
+			// 查看targetClass类中是否有方法被@Transactional注解标注
 			if (parser.isCandidateClass(targetClass)) {
 				return true;
 			}

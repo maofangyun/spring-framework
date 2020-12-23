@@ -1,13 +1,11 @@
 package com.mfy.test.tx;
 
-import com.mchange.v2.c3p0.ComboPooledDataSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -16,11 +14,12 @@ import java.sql.SQLException;
 public class BalanceService {
 
 	@Autowired
-	private ComboPooledDataSource dataSource;
+	private DynamicDataSource dataSource;
 
-	@Transactional(propagation= Propagation.NESTED)
+	@Transactional(propagation= Propagation.NESTED,rollbackFor = {SQLException.class})
 	public void insertBalance(String name,String acount) throws SQLException {
-		Connection connection = DataSourceUtils.getConnection(dataSource);
+		DynamicDataSource.setDataSource("ds1");
+		Connection connection = dataSource.getConnection();
 		String sql = "INSERT INTO user_balance(name,balance) VALUES (?,?)";
 		//获取PreparedStatement对象
 		PreparedStatement ps = connection.prepareStatement(sql);

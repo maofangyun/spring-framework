@@ -12,9 +12,6 @@ import java.util.List;
 @Component
 public class MvcConfig implements WebMvcConfigurer {
 
-    @Autowired
-    private UserInterceptor userInterceptor;
-
 	@Override
     public void configureViewResolvers(ViewResolverRegistry registry) {
         registry.jsp("/resources/main/WEB-INF/views/", ".jsp");
@@ -40,6 +37,6 @@ public class MvcConfig implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(userInterceptor).addPathPatterns("/user/**");
+        registry.addInterceptor(new UserInterceptor()).addPathPatterns("/user/**");
     }
 }

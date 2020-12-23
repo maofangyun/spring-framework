@@ -97,7 +97,7 @@ public abstract class AbstractAdvisorAutoProxyCreator extends AbstractAutoProxyC
 		List<Advisor> eligibleAdvisors = findAdvisorsThatCanApply(candidateAdvisors, beanClass, beanName);
 		extendAdvisors(eligibleAdvisors);
 		if (!eligibleAdvisors.isEmpty()) {
-			// 给合格的不同类型的增强排序,为的是后续不同类型的增强按顺序进行调用
+			// 给合各个不同类型的增强排序,为的是后续不同类型的增强按顺序进行调用
 			eligibleAdvisors = sortAdvisors(eligibleAdvisors);
 		}
 		return eligibleAdvisors;

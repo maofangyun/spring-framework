@@ -13,7 +13,7 @@ import javax.sql.DataSource;
 public class TransactionManagerConfig {
 
 	@Autowired
-	private ComboPooledDataSource dataSource;
+	private DynamicDataSource dataSource;
 
 	@Bean
 	public TransactionManager getTransactionManager(){

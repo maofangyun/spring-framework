@@ -15,11 +15,12 @@ import java.sql.SQLException;
 public class UserService {
 
 	@Autowired
-	private ComboPooledDataSource dataSource;
+	private DynamicDataSource dataSource;
 
-	@Transactional(propagation= Propagation.NESTED)
+	@Transactional(propagation= Propagation.NESTED, rollbackFor = {SQLException.class})
 	public void insertUser(String user) throws SQLException {
-		Connection connection = DataSourceUtils.getConnection(dataSource);
+		DynamicDataSource.setDataSource("ds1");
+		Connection connection = dataSource.getConnection();
 		String sql = "INSERT INTO user(user) VALUES (?)";
 		//获取PreparedStatement对象
 		PreparedStatement ps = connection.prepareStatement(sql);

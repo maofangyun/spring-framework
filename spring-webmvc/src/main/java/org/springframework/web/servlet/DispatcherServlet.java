@@ -1060,7 +1060,7 @@ public class DispatcherServlet extends FrameworkServlet {
 				// making them available for @ExceptionHandler methods and other scenarios.
 				dispatchException = new NestedServletException("Handler dispatch failed", err);
 			}
-			// 视图渲染的逻辑以及拦截器的完成处理器逻辑的调用
+			// 视图渲染的逻辑以及拦截器的完成处理器逻辑的调用afterCompletion()
 			processDispatchResult(processedRequest, response, mappedHandler, mv, dispatchException);
 		}
 		catch (Exception ex) {
