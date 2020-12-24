@@ -1,4 +1,4 @@
-package com.mfy.test.bean;
+package com.mfy.test.ioc;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 
 @Configuration
-@ComponentScan("com.mfy.test.bean")
+@ComponentScan("com.mfy.test.ioc")
 @EnableAspectJAutoProxy
 public class BeanConfig {
 

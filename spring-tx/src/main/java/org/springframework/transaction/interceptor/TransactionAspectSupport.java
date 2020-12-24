@@ -329,11 +329,11 @@ public abstract class TransactionAspectSupport implements BeanFactoryAware, Init
 	protected Object invokeWithinTransaction(Method method, @Nullable Class<?> targetClass,
 			final InvocationCallback invocation) throws Throwable {
 
-		// transactionAttributeSource属性,在解析@EnableTransactionManagement注解时,
-		// 会注入ProxyTransactionManagementConfiguration,并使用@bean注入transactionAttributeSource
+		// 在解析@EnableTransactionManagement注解时,会注入ProxyTransactionManagementConfiguration,并使用@bean注入transactionAttributeSource
+		// transactionAttributeSource缓存了@Transactional的方法名称和解析出来的@Transactional属性信息(TransactionAttribute)的映射关系
 		TransactionAttributeSource tas = getTransactionAttributeSource();
 		final TransactionAttribute txAttr = (tas != null ? tas.getTransactionAttribute(method, targetClass) : null);
-		// 获取事物管理器TransactionManager,主要是从spring容器中获取,通过txAttr可以动态选择不同的TransactionManager
+		// 获取事务管理器TransactionManager(持有DataSource),主要是从spring容器中获取,通过txAttr可以动态选择不同的TransactionManager
 		final TransactionManager tm = determineTransactionManager(txAttr);
 
 		if (this.reactiveAdapterRegistry != null && tm instanceof ReactiveTransactionManager) {
@@ -358,7 +358,7 @@ public abstract class TransactionAspectSupport implements BeanFactoryAware, Init
 		final String joinpointIdentification = methodIdentification(method, targetClass, txAttr);
 
 		if (txAttr == null || !(ptm instanceof CallbackPreferringPlatformTransactionManager)) {
-			// 返回一个事物的封装对象,进行后续的回滚和提交操作
+			// 返回一个事务的封装对象,进行后续的回滚和提交操作
 			TransactionInfo txInfo = createTransactionIfNecessary(ptm, txAttr, joinpointIdentification);
 
 			Object retVal;
@@ -373,7 +373,7 @@ public abstract class TransactionAspectSupport implements BeanFactoryAware, Init
 				throw ex;
 			}
 			finally {
-				// 将事物同步管理器中的transactionInfoHolder置为最外层事物的txInfo
+				// 将TransactionInfo中的属性transactionInfoHolder置为最外层事物的txInfo
 				cleanupTransactionInfo(txInfo);
 			}
 
@@ -384,7 +384,7 @@ public abstract class TransactionAspectSupport implements BeanFactoryAware, Init
 					retVal = VavrDelegate.evaluateTryFailure(retVal, txAttr, status);
 				}
 			}
-			// 提交事物
+			// 提交事务
 			commitTransactionAfterReturning(txInfo);
 			return retVal;
 		}
@@ -476,10 +476,14 @@ public abstract class TransactionAspectSupport implements BeanFactoryAware, Init
 			return determineQualifiedTransactionManager(this.beanFactory, this.transactionManagerBeanName);
 		}
 		else {
+			// 如果没有特意指定的话,此处一般返回的是null,
+			// 使用TransactionManagementConfigurer可以进行指定(很少使用)
 			TransactionManager defaultTransactionManager = getTransactionManager();
 			if (defaultTransactionManager == null) {
+				// 从缓存中用默认的key获取
 				defaultTransactionManager = this.transactionManagerCache.get(DEFAULT_TRANSACTION_MANAGER_KEY);
 				if (defaultTransactionManager == null) {
+					// 从beanFactory中获取TransactionManager
 					defaultTransactionManager = this.beanFactory.getBean(TransactionManager.class);
 					this.transactionManagerCache.putIfAbsent(
 							DEFAULT_TRANSACTION_MANAGER_KEY, defaultTransactionManager);
@@ -572,7 +576,7 @@ public abstract class TransactionAspectSupport implements BeanFactoryAware, Init
 		TransactionStatus status = null;
 		if (txAttr != null) {
 			if (tm != null) {
-				// 获取事物状态的对象
+				// 获取事务状态的对象
 				status = tm.getTransaction(txAttr);
 			}
 			else {
@@ -616,7 +620,9 @@ public abstract class TransactionAspectSupport implements BeanFactoryAware, Init
 			}
 		}
 
-		// 将txInfo和当前的线程绑定,同时保存上一次的txInfo
+		// 将txInfo和当前的线程绑定,同时保存上一次的txInfo,
+		// 相当于txInfo即保存了当前事务的全部信息,也保存了上一层事务的全部信息,
+		// 在当前事务执行完毕回到上一层事务之后,会清除当前的txInfo,将上一层txInfo置为当前
 		txInfo.bindToThread();
 		return txInfo;
 	}

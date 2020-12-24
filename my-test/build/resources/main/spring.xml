@@ -16,38 +16,38 @@
 		<!--@Service @Component @Controller 如果不配做这个自定义标签，就不认识注解-->
 		<context:component-scan base-package="com.mfy.test" scoped-proxy="interfaces"/>
 		<!--这两个beanDefinition会在实例化过程中合并成一个-->
-		<bean id="parent" class="com.mfy.test.bean.Parent" abstract="true">
+		<bean id="parent" class="com.mfy.test.ioc.Parent" abstract="true">
 			<property name="username" value="parent name"/>
 			<property name="age" value="25"/>
 		</bean>
-		<bean id="son" class="com.mfy.test.bean.Son" parent="parent">
+		<bean id="son" class="com.mfy.test.ioc.Son" parent="parent">
 			<!--<property name="username" value="son name"/>-->
 			<meta key="name" value="zhangsan"/>
 		</bean>
 
-		<bean class="com.mfy.test.bean.FactoryBean" id="factoryBean" autowire="byName">
-			<description>com.mfy.test.bean.FactoryBean</description>
+		<bean class="com.mfy.test.ioc.FactoryBean" id="factoryBean" autowire="byName">
+			<description>com.mfy.test.ioc.FactoryBean</description>
 			<meta key="key1" value="value1"/>
 		</bean>
 
-		<bean id="initMethodBean" class="com.mfy.test.bean.InitMethodBean" init-method="initMethod"/>
+		<bean id="initMethodBean" class="com.mfy.test.ioc.InitMethodBean" init-method="initMethod"/>
 
 		<!--init-method="initMehtod" destroy-method="destroyMethod"-->
-		<!--    <bean class="com.mfy.test.bean.PropertyClass" id="propertyClass" factory-bean="factoryBean" factory-method="factoryMethod">-->
+		<!--    <bean class="com.mfy.test.ioc.PropertyClass" id="propertyClass" factory-bean="factoryBean" factory-method="factoryMethod">-->
 		<!--		<constructor-arg name="id" value="name"/>-->
 		<!--		<constructor-arg name="son" ref="son"/>-->
 		<!--	</bean>-->
 
-		<bean id="woman" class="com.mfy.test.bean.Woman" lazy-init="false"></bean>
+		<bean id="woman" class="com.mfy.test.ioc.Woman" lazy-init="false"></bean>
 
 
-		<bean id="people" class="com.mfy.test.bean.ShowSixClass">
+		<bean id="people" class="com.mfy.test.ioc.ShowSixClass">
 			<lookup-method name="getPeople" bean="woman"/>
 		</bean>
 
 
-		<bean id="replaceClass" class="com.mfy.test.bean.ReplaceClass" lazy-init="false"/>
-		<bean id="originClass" class="com.mfy.test.bean.OriginClass">
+		<bean id="replaceClass" class="com.mfy.test.ioc.ReplaceClass" lazy-init="false"/>
+		<bean id="originClass" class="com.mfy.test.ioc.OriginClass">
 			<replaced-method name="method" replacer="replaceClass">
 				<!--方法可能出现重载的情况，要根据类型和方法名找方法-->
 				<arg-type match="java.lang.String"/>
@@ -55,20 +55,20 @@
 		</bean>
 
 
-		<bean class="com.mfy.test.bean.ConstructorArgBean" id="constructorArgBean">
+		<bean class="com.mfy.test.ioc.ConstructorArgBean" id="constructorArgBean">
 			<constructor-arg name="username" value="Jack" index="0" type="java.lang.String"/>
 			<constructor-arg name="password" value="123" index="1" type="java.lang.String"/>
 		</bean>
 
 		<!--@Value()-->
-		<bean class="com.mfy.test.bean.PropertyBean" id="propertyBean">
+		<bean class="com.mfy.test.ioc.PropertyBean" id="propertyBean">
 			<property name="username" value="Jack"/>
 			<property name="password" value="123"/>
 			<!--<aop:scoped-proxy/>-->
 		</bean>
 
-		<bean class="com.mfy.test.bean.DecoratorBean" id="decoratorBean"
-			  p:username="Jack" p:password="123" c:age="12" c:sex="1"/>
+		<bean class="com.mfy.test.ioc.DecoratorBean" id="decoratorBean"
+              p:username="Jack" p:password="123" c:age="12" c:sex="1"/>
 
 
 		<bean id="businessObject" class="org.springframework.aop.framework.ProxyFactoryBean">

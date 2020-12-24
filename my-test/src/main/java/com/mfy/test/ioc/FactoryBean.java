@@ -1,6 +1,4 @@
-package com.mfy.test.bean;
-
-import org.springframework.beans.factory.annotation.Autowired;
+package com.mfy.test.ioc;
 
 public class FactoryBean implements org.springframework.beans.factory.FactoryBean<Woman> {
 

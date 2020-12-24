@@ -1,4 +1,4 @@
-package com.mfy.test.bean;
+package com.mfy.test.aop;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

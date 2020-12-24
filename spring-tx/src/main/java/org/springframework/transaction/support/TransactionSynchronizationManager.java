@@ -136,7 +136,9 @@ public abstract class TransactionSynchronizationManager {
 	 */
 	@Nullable
 	public static Object getResource(Object key) {
+		// 对spring事务来说,key=datasource
 		Object actualKey = TransactionSynchronizationUtils.unwrapResourceIfNecessary(key);
+		// 对spring事务来说,key=connection
 		Object value = doGetResource(actualKey);
 		if (value != null && logger.isTraceEnabled()) {
 			logger.trace("Retrieved value [" + value + "] for key [" + actualKey + "] bound to thread [" +
@@ -152,7 +154,7 @@ public abstract class TransactionSynchronizationManager {
 	private static Object doGetResource(Object actualKey) {
 		// resources这个ThreadLocal变量中,保存了数据库线程池对象和连接对象的映射关系,
 		// 由于ThreadLocal的特性,也保存了线程和连接对象的映射关系
-		// resources.get()取出来是map,因为一个事务中可能需要连接多个数据库,存在多个数据源
+		// resources.get()取出来是Map<Object, Object>,原因:比如spring-mybatis,会存入其他需要同步的资源
 		Map<Object, Object> map = resources.get();
 		if (map == null) {
 			return null;

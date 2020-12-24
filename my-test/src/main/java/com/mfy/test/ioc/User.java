@@ -1,4 +1,4 @@
-package com.mfy.test.bean;
+package com.mfy.test.ioc;
 
 import org.springframework.context.annotation.Configuration;
 

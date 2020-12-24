@@ -1157,7 +1157,7 @@ manages. It also supports setter-based DI after some dependencies have already b
 injected through the constructor approach. You configure the dependencies in the form of
 a `BeanDefinition`, which you use in conjunction with `PropertyEditor` instances to
 convert properties from one format to another. However, most Spring users do not work
-with these classes directly (that is, programmatically) but rather with XML `bean`
+with these classes directly (that is, programmatically) but rather with XML `ioc`
 definitions, annotated components (that is, classes annotated with `@Component`,
 `@Controller`, and so forth), or `@Bean` methods in Java-based `@Configuration` classes.
 These sources are then converted internally into instances of `BeanDefinition` and used to
@@ -1563,7 +1563,7 @@ bean is a <<beans-factory-scopes,prototype>> bean, this typo and the resulting e
 may only be discovered long after the container is deployed.
 
 NOTE: The `local` attribute on the `idref` element is no longer supported in the 4.0 beans
-XSD, since it does not provide value over a regular `bean` reference any more. Change
+XSD, since it does not provide value over a regular `ioc` reference any more. Change
 your existing `idref local` references to `idref bean` when upgrading to the 4.0 schema.
 
 A common place (at least in versions earlier than Spring 2.0) where the `<idref/>` element
@@ -1582,12 +1582,12 @@ is a dependency of the bean whose property is to be set, and it is initialized o
 as needed before the property is set. (If the collaborator is a singleton bean, it may
 already be initialized by the container.) All references are ultimately a reference to
 another object. Scoping and validation depend on whether you specify the ID or name of the
-other object through the `bean` or `parent` attribute.
+other object through the `ioc` or `parent` attribute.
 
-Specifying the target bean through the `bean` attribute of the `<ref/>` tag is the most
+Specifying the target bean through the `ioc` attribute of the `<ref/>` tag is the most
 general form and allows creation of a reference to any bean in the same container or
 parent container, regardless of whether it is in the same XML file. The value of the
-`bean` attribute may be the same as the `id` attribute of the target bean or be the same
+`ioc` attribute may be the same as the `id` attribute of the target bean or be the same
 as one of the values in the `name` attribute of the target bean. The following example
 shows how to use a `ref` element:
 
@@ -1626,7 +1626,7 @@ listings shows how to use the `parent` attribute:
 ----
 
 NOTE: The `local` attribute on the `ref` element is no longer supported in the 4.0 beans
-XSD, since it does not provide value over a regular `bean` reference any more. Change
+XSD, since it does not provide value over a regular `ioc` reference any more. Change
 your existing `ref local` references to `ref bean` when upgrading to the 4.0 schema.
 
 
@@ -1895,7 +1895,7 @@ The preceding configuration is equivalent to the following Java code:
 [[beans-p-namespace]]
 ==== XML Shortcut with the p-namespace
 
-The p-namespace lets you use the `bean` element's attributes (instead of nested
+The p-namespace lets you use the `ioc` element's attributes (instead of nested
 `<property/>` elements) to describe your property values collaborating beans, or both.
 
 Spring supports extensible configuration formats <<core.adoc#xsd-schemas,with namespaces>>,
@@ -7125,7 +7125,7 @@ The examples in that section demonstrate the use of the `@Qualifier` annotation 
 custom qualifier annotations to provide fine-grained control when you resolve autowire
 candidates. Because those examples were based on XML bean definitions, the qualifier
 metadata was provided on the candidate bean definitions by using the `qualifier` or `meta`
-child elements of the `bean` element in the XML. When relying upon classpath scanning for
+child elements of the `ioc` element in the XML. When relying upon classpath scanning for
 auto-detection of components, you can provide the qualifier metadata with type-level
 annotations on the candidate class. The following three examples demonstrate this
 technique:
@@ -8128,7 +8128,7 @@ The standard set of `*Aware` interfaces (such as <<beans-beanfactory, BeanFactor
 
 The `@Bean` annotation supports specifying arbitrary initialization and destruction
 callback methods, much like Spring XML's `init-method` and `destroy-method` attributes
-on the `bean` element, as the following example shows:
+on the `ioc` element, as the following example shows:
 
 [source,java,indent=0,subs="verbatim,quotes",role="primary"]
 .Java

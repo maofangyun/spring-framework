@@ -239,9 +239,12 @@ public class DataSourceTransactionManager extends AbstractPlatformTransactionMan
 		// 每个方法进入,都会创建一个事物对象
 		DataSourceTransactionObject txObject = new DataSourceTransactionObject();
 		txObject.setSavepointAllowed(isNestedTransactionAllowed());
-		// 第一次获取连接对象时,会返回null
+		// 第一次获取连接对象时,会返回null,因为会从ThreadLocal<Map<Object, Object>> resources中,用datasource作为key,获取连接对象
+		// 而此时,连接对象还没有创建,所以resources也不存在datasource这个key所对应的connection
 		ConnectionHolder conHolder =
 				(ConnectionHolder) TransactionSynchronizationManager.getResource(obtainDataSource());
+		// 设置newConnectionHolder=false,表明这个连接对象不是从连接池中获取的,而是直接从事务管理器得到,
+		// 说明当前事务和上一层事务用的是同一个连接对象
 		txObject.setConnectionHolder(conHolder, false);
 		return txObject;
 	}
@@ -268,7 +271,7 @@ public class DataSourceTransactionManager extends AbstractPlatformTransactionMan
 				if (logger.isDebugEnabled()) {
 					logger.debug("Acquired Connection [" + newCon + "] for JDBC transaction");
 				}
-				// 将连接对象封装之后,装入事物对象中
+				// 将连接对象封装之后,装入事务对象中,注意,这里的newConnectionHolder=true
 				txObject.setConnectionHolder(new ConnectionHolder(newCon), true);
 			}
 
@@ -296,8 +299,9 @@ public class DataSourceTransactionManager extends AbstractPlatformTransactionMan
 				txObject.getConnectionHolder().setTimeoutInSeconds(timeout);
 			}
 
-			// 依靠resources这个ThreadLocal变量,绑定了连接对象和线程的映射关系
+			// 当connetion是新创建时,要加入事务同步管理器中
 			if (txObject.isNewConnectionHolder()) {
+				// 依靠resources这个ThreadLocal变量,绑定了连接对象和线程的映射关系
 				TransactionSynchronizationManager.bindResource(obtainDataSource(), txObject.getConnectionHolder());
 			}
 		}
@@ -331,6 +335,7 @@ public class DataSourceTransactionManager extends AbstractPlatformTransactionMan
 			logger.debug("Committing JDBC transaction on Connection [" + con + "]");
 		}
 		try {
+			// 事务的提交,最终还是交给连接对象进行处理
 			con.commit();
 		}
 		catch (SQLException ex) {
@@ -360,6 +365,7 @@ public class DataSourceTransactionManager extends AbstractPlatformTransactionMan
 			logger.debug("Setting JDBC transaction [" + txObject.getConnectionHolder().getConnection() +
 					"] rollback-only");
 		}
+		// 设置当前事务需要回滚
 		txObject.setRollbackOnly();
 	}
 

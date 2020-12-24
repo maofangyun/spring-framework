@@ -437,9 +437,9 @@ with different characteristics, so be sure to make yourself familiar with weavin
 before making a decision.
 ====
 
-Spring AOP also supports an additional PCD named `bean`. This PCD lets you limit
+Spring AOP also supports an additional PCD named `ioc`. This PCD lets you limit
 the matching of join points to a particular named Spring bean or to a set of named
-Spring beans (when using wildcards). The `bean` PCD has the following form:
+Spring beans (when using wildcards). The `ioc` PCD has the following form:
 
 [source,java,indent=0,subs="verbatim,quotes",role="primary"]
 .Java
@@ -454,17 +454,17 @@ Spring beans (when using wildcards). The `bean` PCD has the following form:
 
 The `idOrNameOfBean` token can be the name of any Spring bean. Limited wildcard
 support that uses the `*` character is provided, so, if you establish some naming
-conventions for your Spring beans, you can write a `bean` PCD expression
-to select them. As is the case with other pointcut designators, the `bean` PCD can
+conventions for your Spring beans, you can write a `ioc` PCD expression
+to select them. As is the case with other pointcut designators, the `ioc` PCD can
 be used with the `&&` (and), `||` (or), and `!` (negation) operators, too.
 
 [NOTE]
 ====
-The `bean` PCD is supported only in Spring AOP and not in
+The `ioc` PCD is supported only in Spring AOP and not in
 native AspectJ weaving. It is a Spring-specific extension to the standard PCDs that
 AspectJ defines and is, therefore, not available for aspects declared in the `@Aspect` model.
 
-The `bean` PCD operates at the instance level (building on the Spring bean name
+The `ioc` PCD operates at the instance level (building on the Spring bean name
 concept) rather than at the type level only (to which weaving-based AOP is limited).
 Instance-based pointcut designators are a special capability of Spring's
 proxy-based AOP framework and its close integration with the Spring bean factory, where

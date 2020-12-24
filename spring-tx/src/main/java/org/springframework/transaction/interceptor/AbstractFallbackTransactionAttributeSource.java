@@ -113,6 +113,7 @@ public abstract class AbstractFallbackTransactionAttributeSource implements Tran
 			TransactionAttribute txAttr = computeTransactionAttribute(method, targetClass);
 			// Put it in the cache.
 			if (txAttr == null) {
+				// 为什么没有@Transactional注解的方法,也要缓存起来?
 				this.attributeCache.put(cacheKey, NULL_TRANSACTION_ATTRIBUTE);
 			}
 			else {
@@ -123,6 +124,7 @@ public abstract class AbstractFallbackTransactionAttributeSource implements Tran
 				if (logger.isTraceEnabled()) {
 					logger.trace("Adding transactional method '" + methodIdentification + "' with attribute: " + txAttr);
 				}
+				// 缓存了方法全限定名称和@Transactional注解信息(TransactionAttribute封装)的映射关系
 				this.attributeCache.put(cacheKey, txAttr);
 			}
 			return txAttr;

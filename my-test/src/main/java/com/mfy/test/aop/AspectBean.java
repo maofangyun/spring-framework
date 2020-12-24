@@ -1,4 +1,4 @@
-package com.mfy.test.bean;
+package com.mfy.test.aop;
 
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -12,11 +12,8 @@ import java.util.List;
 @Aspect
 public class AspectBean {
 
-	@Pointcut("execution(* com.mfy.test.bean.IndexService.*(..))")
+	@Pointcut("execution(* com.mfy.test.aop.IndexService.*(..))")
 	public void pc1(){}
-
-//	@Pointcut("execution(* com.mfy.test.bean.UserService.getIndexService(..))")
-//	public void pc2(){}
 
 	@Before("pc1()")
 	public void beforeTest(JoinPoint join){

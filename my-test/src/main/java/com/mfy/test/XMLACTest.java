@@ -1,6 +1,5 @@
 package com.mfy.test;
 
-import com.mfy.test.bean.*;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 

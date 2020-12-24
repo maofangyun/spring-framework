@@ -43,9 +43,13 @@ public class ProxyTransactionManagementConfiguration extends AbstractTransaction
 	@Role(BeanDefinition.ROLE_INFRASTRUCTURE)
 	public BeanFactoryTransactionAttributeSourceAdvisor transactionAdvisor(
 			TransactionAttributeSource transactionAttributeSource, TransactionInterceptor transactionInterceptor) {
-
+		// 创建事务的通知器,Advisor(通知器)=Pointcut(切点)+Advice(通知)
 		BeanFactoryTransactionAttributeSourceAdvisor advisor = new BeanFactoryTransactionAttributeSourceAdvisor();
+		// 添加事务的Pointcut,用来识别@Transactional,
+		// spring启动时,会扫描所有的类,将标注@Transactional的方法名称和解析出来的@Transactional属性信息(TransactionAttribute)的映射关系,
+		// 缓存到TransactionAttributeSource.attributeCache中
 		advisor.setTransactionAttributeSource(transactionAttributeSource);
+		// 添加事务的通知,用来拦截方法,执行具体的事务逻辑
 		advisor.setAdvice(transactionInterceptor);
 		if (this.enableTx != null) {
 			advisor.setOrder(this.enableTx.<Integer>getNumber("order"));

@@ -1,8 +1,7 @@
-package com.mfy.test.bean;
+package com.mfy.test.ioc;
 
+import com.mfy.test.aop.IndexService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
-import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Component;
 
 @Component

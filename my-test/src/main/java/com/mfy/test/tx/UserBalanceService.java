@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -24,6 +25,7 @@ public class UserBalanceService {
 	 * */
 	@Transactional
 	public void insert(String name,String acount) throws SQLException {
+		TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronizationHandler());
 		userService.insertUser(name);
 		try {
 			balanceService.insertBalance(name, acount);
