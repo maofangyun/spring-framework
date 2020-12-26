@@ -244,6 +244,9 @@ public abstract class AbstractAutoProxyCreator extends ProxyProcessorSupport
 		return wrapIfNecessary(bean, beanName, cacheKey);
 	}
 
+	/**
+	 * 收集需要跳过代理的对象信息
+	 * */
 	@Override
 	public Object postProcessBeforeInstantiation(Class<?> beanClass, String beanName) {
 		// 当beanClass是FactoryBean接口的实现类时,返回&+beanName
@@ -307,7 +310,10 @@ public abstract class AbstractAutoProxyCreator extends ProxyProcessorSupport
 			// 当beanClass是FactoryBean接口的实现类时,返回&+beanName
 			Object cacheKey = getCacheKey(bean.getClass(), beanName);
 			if (this.earlyProxyReferences.remove(cacheKey) != bean) {
-				// 返回被bean所匹配的通知器增强的代理对象
+				// 返回被bean所匹配的通知器增强的代理对象,步骤:
+				// 1.判断bean是否应该跳过代理
+				// 2.收集bean所对应的通知器
+				// 3.根据通知器,创建代理对象
 				return wrapIfNecessary(bean, beanName, cacheKey);
 			}
 		}

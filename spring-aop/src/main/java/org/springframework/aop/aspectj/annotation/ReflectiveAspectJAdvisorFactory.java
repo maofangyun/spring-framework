@@ -198,7 +198,7 @@ public class ReflectiveAspectJAdvisorFactory extends AbstractAspectJAdvisorFacto
 		if (expressionPointcut == null) {
 			return null;
 		}
-
+		// 将aspectJAdviceMethod和对应的pointcut包装成通知Advice
 		return new InstantiationModelAwarePointcutAdvisorImpl(expressionPointcut, candidateAdviceMethod,
 				this, aspectInstanceFactory, declarationOrderInAspect, aspectName);
 	}

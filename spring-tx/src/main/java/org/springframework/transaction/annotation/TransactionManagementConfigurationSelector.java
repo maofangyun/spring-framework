@@ -49,9 +49,9 @@ public class TransactionManagementConfigurationSelector extends AdviceModeImport
 			case PROXY:
 				// AutoProxyRegistrar的作用:将InfrastructureAdvisorAutoProxyCreator后置处理器注册到容器,开启自动动态代理功能
 				// ProxyTransactionManagementConfiguration的作用:
-				// 1.向容器中注册事物切面类BeanFactoryTransactionAttributeSourceAdvisor(Advisor=Advice+PointCut)
+				// 1.向容器中注册事务通知器BeanFactoryTransactionAttributeSourceAdvisor(Advisor=Advice+PointCut)
 				// 2.注册@Transactional的扫描器TransactionAttributeSource
-				// 3.注册事物的拦截器TransactionInterceptor(Advice)
+				// 3.注册事务的拦截器(通知)TransactionInterceptor(Advice)
 				return new String[] {AutoProxyRegistrar.class.getName(),
 						ProxyTransactionManagementConfiguration.class.getName()};
 			case ASPECTJ:

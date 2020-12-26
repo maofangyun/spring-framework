@@ -5,7 +5,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 /**
- * 为什么spi违反了双亲委派,以及违反的原因
+ * spi违反了双亲委派的原因分析
  * */
 public class DriverManagerSpi {
 
@@ -30,6 +30,33 @@ public class DriverManagerSpi {
 	 * */
 	public static void main(String[] args) {
 		try {
+			/**
+			 * 	在调用DriverManager.getConnection()时,会触发DriverManager的类加载流程,在初始化时,会执行如下代码
+			 * 	static {
+			 * 		loadInitialDrivers();
+			 *  }
+			 * 	loadInitialDrivers()会调用如下代码:
+			 * 		// 指定了要加载Driver.class,同时使用Thread.currentThread().getContextClassLoader()的类加载器(即AppClassLoader)
+			 * 		ServiceLoader<Driver> loadedDrivers = ServiceLoader.load(Driver.class);
+			 * 		Iterator<Driver> driversIterator = loadedDrivers.iterator();
+			 * 	    while(driversIterator.hasNext()) {
+			 * 	    	// 执行Driver子类的类加载流程,c = Class.forName(cn, false, loader),得到Class对象
+			 * 	    	// 其中cn="com.mysql.cj.jdbc.Driver",false表示只进行类的加载,不进行初始化流程,loader=AppClassLoader,
+			 * 	    	// 后续马上执行c.newInstance(),触发类的初始化流程,以mysql举例:
+			 * 	    	//     static {
+			 *         	//			try {
+			 *          //				java.sql.DriverManager.registerDriver(new Driver());
+			 *         	//			} catch (SQLException E) {
+		 	 *          //   			throw new RuntimeException("Can't register driver!");
+			 *         	//			}
+			 *     		//	}
+			 *     		// 	通过DriverManager.registerDriver()方法,将驱动注册到registeredDrivers中
+			 *     		以上的这些操作,全部都在下面的一行代码中完成
+			 *          driversIterator.next();
+			 *     }
+			 * 	这段代码,通过遍历的方式,将扫描项目加载所有jar的META-INF.services目录下属于Driver.Class的子类(SPI机制),
+			 *	并创建出实例对象,完成getConnection()方法的调用
+			 * */
 			Connection connection = DriverManager.getConnection("jdbc:mysql://39.98.237.119:3307/detection", "root", "123456");
 			System.out.println(connection.getClass().getClassLoader());
 			// Connection自己是被Bootstrap ClassLoader加载的
