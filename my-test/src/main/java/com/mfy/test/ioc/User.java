@@ -1,8 +1,7 @@
 package com.mfy.test.ioc;
 
-import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Component;
 
-@Configuration
 public class User {
 
 	private String name;

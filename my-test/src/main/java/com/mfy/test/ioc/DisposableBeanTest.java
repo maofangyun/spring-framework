@@ -6,7 +6,7 @@ import org.springframework.core.annotation.Order;
 import java.util.List;
 
 @Order(9)
-public class OriginClass implements DisposableBean {
+public class DisposableBeanTest implements DisposableBean {
 
     /*
     * 这个方法需要进行业务功能增强，但是又不希望在原来基础上修改，可以用
@@ -21,7 +21,7 @@ public class OriginClass implements DisposableBean {
     }
 
     @Override
-    public void destroy() throws Exception {
-        System.out.println("=============OriginClass.DisposableBean");
+    public void destroy(){
+        System.out.println("=============DisposableBeanTest.DisposableBean");
     }
 }

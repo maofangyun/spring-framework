@@ -65,6 +65,7 @@ public class AnnotationConfigApplicationContext extends GenericApplicationContex
 	public AnnotationConfigApplicationContext() {
 		// 隐式的会调用父类的构造方法,this.beanFactory = new DefaultListableBeanFactory();
 		// 此处会添加内部的一些beanDefinition,存储到BeanFactory的beanDefinitionMap
+		// 还会创建StandardEnvironment对象,并加入到属性environment中
 		this.reader = new AnnotatedBeanDefinitionReader(this);
 		this.scanner = new ClassPathBeanDefinitionScanner(this);
 	}

@@ -1,14 +1,12 @@
 package com.mfy.test.ioc;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Import;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 
 @Service
-@Import(ConstructorArgBean.class)
 public class ConstructorAutowiredBean {
 
 	public Student getStudent() {
@@ -22,8 +20,8 @@ public class ConstructorAutowiredBean {
     //@Autowired
     private Student student;
 
-    //@Autowired
-    private PropertyBean propertyBean;
+	//@Autowired
+	private User user;
 
 	@Autowired(required = false)
     public ConstructorAutowiredBean(Student student) {
@@ -31,8 +29,8 @@ public class ConstructorAutowiredBean {
     }
 
 	@Autowired(required = false)
-	public ConstructorAutowiredBean(PropertyBean propertyBean,Student student) {
-		this.propertyBean = propertyBean;
+	public ConstructorAutowiredBean(User user,Student student) {
+		this.user = user;
 		this.student = student;
 	}
 

@@ -478,6 +478,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 	@Override
 	public String[] getBeanNamesForType(ResolvableType type, boolean includeNonSingletons, boolean allowEagerInit) {
 		Class<?> resolved = type.resolve();
+		// 通过bean的类型返回beanName,注意:FactoryBean接口实现类,匹配getObject()方法的返回值类型,返回的beanName是FactoryBean的名称
 		if (resolved != null && !type.hasGenerics()) {
 			return getBeanNamesForType(resolved, includeNonSingletons, allowEagerInit);
 		}
@@ -503,6 +504,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 		if (resolvedBeanNames != null) {
 			return resolvedBeanNames;
 		}
+		// 通过bean的类型,查找beanName,如果存在FactoryBean接口的实现类,会获取getObject()方法的返回类型,再进行比较
 		resolvedBeanNames = doGetBeanNamesForType(ResolvableType.forRawClass(type), includeNonSingletons, true);
 		if (ClassUtils.isCacheSafe(type, getBeanClassLoader())) {
 			cache.put(type, resolvedBeanNames);
@@ -537,6 +539,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 						else  {
 							if (includeNonSingletons || isNonLazyDecorated ||
 									(allowFactoryBeanInit && isSingleton(beanName, mbd, dbd))) {
+								// 获取getObject()方法的返回对象类型,看是否可以和type匹配上
 								matchFound = isTypeMatch(beanName, type, allowFactoryBeanInit);
 							}
 							if (!matchFound) {

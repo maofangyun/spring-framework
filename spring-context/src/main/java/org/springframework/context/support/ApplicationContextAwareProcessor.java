@@ -97,6 +97,7 @@ class ApplicationContextAwareProcessor implements BeanPostProcessor {
 			}, acc);
 		}
 		else {
+			// 调用各种Aware接口
 			invokeAwareInterfaces(bean);
 		}
 
@@ -105,6 +106,7 @@ class ApplicationContextAwareProcessor implements BeanPostProcessor {
 
 	private void invokeAwareInterfaces(Object bean) {
 		if (bean instanceof EnvironmentAware) {
+			// 对于ConfigurationClassPostProcessor,此处注入了Environment对象
 			((EnvironmentAware) bean).setEnvironment(this.applicationContext.getEnvironment());
 		}
 		if (bean instanceof EmbeddedValueResolverAware) {

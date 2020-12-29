@@ -1,4 +1,4 @@
-package com.mfy.test.ioc;
+package com.mfy.test.aop;
 
 import com.mfy.test.aop.IndexService;
 import org.springframework.beans.factory.annotation.Autowired;

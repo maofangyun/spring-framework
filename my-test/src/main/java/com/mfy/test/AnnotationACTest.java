@@ -1,6 +1,7 @@
 package com.mfy.test;
 
 import com.mfy.test.ioc.BeanConfig;
+import com.mfy.test.ioc.Son;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 
