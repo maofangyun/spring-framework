@@ -278,6 +278,7 @@ class ConfigurationClassParser {
 				sourceClass.getMetadata(), PropertySources.class,
 				org.springframework.context.annotation.PropertySource.class)) {
 			if (this.environment instanceof ConfigurableEnvironment) {
+				// 就是把@PropertySource对应资源文件中的数据,封装成PropertySource,注册到environment的propertySources属性中
 				processPropertySource(propertySource);
 			}
 			else {
@@ -462,8 +463,10 @@ class ConfigurationClassParser {
 
 		for (String location : locations) {
 			try {
+				// 遍历propertySources,替换location中的${}
 				String resolvedLocation = this.environment.resolveRequiredPlaceholders(location);
 				Resource resource = this.resourceLoader.getResource(resolvedLocation);
+				// 通过resource找到对应资源文件,读取数据到propertySource中,并注册到environment的propertySources属性中
 				addPropertySource(factory.createPropertySource(name, new EncodedResource(resource, encoding)));
 			}
 			catch (IllegalArgumentException | FileNotFoundException | UnknownHostException ex) {
@@ -484,22 +487,28 @@ class ConfigurationClassParser {
 		String name = propertySource.getName();
 		MutablePropertySources propertySources = ((ConfigurableEnvironment) this.environment).getPropertySources();
 
+		// 判断@PropertySource注解的name是否已经存在
 		if (this.propertySourceNames.contains(name)) {
 			// We've already added a version, we need to extend it
+			// 取出已经存在的PropertySource
 			PropertySource<?> existing = propertySources.get(name);
 			if (existing != null) {
 				PropertySource<?> newSource = (propertySource instanceof ResourcePropertySource ?
 						((ResourcePropertySource) propertySource).withResourceName() : propertySource);
+				// 判断已经存在的PropertySource是否CompositePropertySource类型(若true,表示name至少重复了三次)
 				if (existing instanceof CompositePropertySource) {
+					// 直接将newSource加入到CompositePropertySource的propertySources属性中(包含了所有相同name的PropertySource)
 					((CompositePropertySource) existing).addFirstPropertySource(newSource);
 				}
 				else {
 					if (existing instanceof ResourcePropertySource) {
 						existing = ((ResourcePropertySource) existing).withResourceName();
 					}
+					// 创建CompositePropertySource,这个类,作用就是保存名字相同的新旧PropertySource
 					CompositePropertySource composite = new CompositePropertySource(name);
 					composite.addPropertySource(newSource);
 					composite.addPropertySource(existing);
+					// 用composite替换旧的propertySource,这样新旧的propertySource都注册进来了
 					propertySources.replace(name, composite);
 				}
 				return;
