@@ -1,7 +1,5 @@
 package com.mfy.test.ioc;
 
-import org.springframework.stereotype.Component;
-
 public class User {
 
 	private String name;

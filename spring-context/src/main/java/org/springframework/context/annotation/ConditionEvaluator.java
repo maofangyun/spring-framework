@@ -78,21 +78,31 @@ class ConditionEvaluator {
 	 * @return if the item should be skipped
 	 */
 	public boolean shouldSkip(@Nullable AnnotatedTypeMetadata metadata, @Nullable ConfigurationPhase phase) {
+		// 注解信息metadata中,不包含@Conditional注解,直接返回false
 		if (metadata == null || !metadata.isAnnotated(Conditional.class.getName())) {
 			return false;
 		}
 
+		// 有@Conditional注解标注的类,第一次会进入下面的代码块,应该传入的参数phase=null
 		if (phase == null) {
 			if (metadata instanceof AnnotationMetadata &&
+					// 判断类上是否有@Component,@ComponentScan,@Import和@ImportResource注解的标注,
+					// 由于有@Conditional注解标注的类,必定会有@Component或者@Configuration注解(要注入spring容器),所以,这里返回值=true
 					ConfigurationClassUtils.isConfigurationCandidate((AnnotationMetadata) metadata)) {
+				// 递归判断Condition接口中的条件是否匹配
+				// 注意点:ConfigurationPhase.PARSE_CONFIGURATION:表示根据条件是否实例化@Configuration注解标注的配置类
 				return shouldSkip(metadata, ConfigurationPhase.PARSE_CONFIGURATION);
 			}
+			// ConfigurationPhase.REGISTER_BEAN:表示根据条件是否实例化@Bean注解标注的方法,@Configuration注解标注的配置类已经实例化,管不着
 			return shouldSkip(metadata, ConfigurationPhase.REGISTER_BEAN);
 		}
 
+		// 第二次递归,会来到此处代码块
 		List<Condition> conditions = new ArrayList<>();
+		// getConditionClasses
 		for (String[] conditionClasses : getConditionClasses(metadata)) {
 			for (String conditionClass : conditionClasses) {
+				// 实例化@Conditional注解中指定的value代表的类(Condition接口的实现类)
 				Condition condition = getCondition(conditionClass, this.context.getClassLoader());
 				conditions.add(condition);
 			}
@@ -100,11 +110,14 @@ class ConditionEvaluator {
 
 		AnnotationAwareOrderComparator.sort(conditions);
 
+		// 遍历所有Condition的实现类(一个Configuration注解或者@Bean上,可以加多个@Conditional条件)
+		// 只要有一个条件不满足,则跳过扫描,不进行实例化
 		for (Condition condition : conditions) {
 			ConfigurationPhase requiredPhase = null;
 			if (condition instanceof ConfigurationCondition) {
 				requiredPhase = ((ConfigurationCondition) condition).getConfigurationPhase();
 			}
+			// 真正进行匹配,调用matches()的地方
 			if ((requiredPhase == null || requiredPhase == phase) && !condition.matches(this.context, metadata)) {
 				return true;
 			}
@@ -115,8 +128,12 @@ class ConditionEvaluator {
 
 	@SuppressWarnings("unchecked")
 	private List<String[]> getConditionClasses(AnnotatedTypeMetadata metadata) {
+		// 注意classValuesAsString=true,故Object是String类型的
 		MultiValueMap<String, Object> attributes = metadata.getAllAnnotationAttributes(Conditional.class.getName(), true);
+		// 获取@Conditional注解的value值,其实就是实现了Condition接口类的全限定名称
+		// Condition接口实现类的作用:判断筛选条件是否匹配的核心逻辑
 		Object values = (attributes != null ? attributes.get("value") : null);
+		// 返回全限定类名称的集合,方面后面的实例化
 		return (List<String[]>) (values != null ? values : Collections.emptyList());
 	}
 

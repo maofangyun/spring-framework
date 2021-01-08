@@ -3,9 +3,11 @@ package com.mfy.test.ioc;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 
 @Configuration
-@ComponentScan("com.mfy.test.ioc")
+@ComponentScan(basePackages = {"com.mfy.test.ioc","com.mfy.test.condition"})
+@Import({DeferredImportSelectorDemo.class})
 public class BeanConfig {
 
 	@Bean

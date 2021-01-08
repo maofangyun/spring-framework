@@ -106,6 +106,7 @@ class ConfigurationClassEnhancer {
 			}
 			return configClass;
 		}
+		// 创建configClass的代理Class对象
 		Class<?> enhancedClass = createClass(newEnhancer(configClass, classLoader));
 		if (logger.isTraceEnabled()) {
 			logger.trace(String.format("Successfully enhanced %s; enhanced class name is: %s",
@@ -124,6 +125,7 @@ class ConfigurationClassEnhancer {
 		enhancer.setUseFactory(false);
 		enhancer.setNamingPolicy(SpringNamingPolicy.INSTANCE);
 		enhancer.setStrategy(new BeanFactoryAwareGeneratorStrategy(classLoader));
+		// 注册进去了BeanMethodInterceptor这个拦截器,用来拦截@Bean注解的方法
 		enhancer.setCallbackFilter(CALLBACK_FILTER);
 		enhancer.setCallbackTypes(CALLBACK_FILTER.getCallbackTypes());
 		return enhancer;
@@ -187,8 +189,11 @@ class ConfigurationClassEnhancer {
 
 		@Override
 		public int accept(Method method) {
+			// 判断method可以被哪个callback匹配,即可以被增强,后续调用该method,先进入callback的intercept()方法执行增强逻辑
+			// 注意,一个method只能被一个callback匹配上,然后返回它在callbacks数组的索引数字
 			for (int i = 0; i < this.callbacks.length; i++) {
 				Callback callback = this.callbacks[i];
+				// isMatch()方法就是完成callback和method匹配工作
 				if (!(callback instanceof ConditionalCallback) || ((ConditionalCallback) callback).isMatch(method)) {
 					return i;
 				}
@@ -414,8 +419,11 @@ class ConfigurationClassEnhancer {
 
 		@Override
 		public boolean isMatch(Method candidateMethod) {
-			return (candidateMethod.getDeclaringClass() != Object.class &&
+			return (
+					// 不代理Object这个超类的方法
+					candidateMethod.getDeclaringClass() != Object.class &&
 					!BeanFactoryAwareMethodInterceptor.isSetBeanFactory(candidateMethod) &&
+					// 判断方法上是否有@Bean注解
 					BeanAnnotationHelper.isBeanAnnotated(candidateMethod));
 		}
 
