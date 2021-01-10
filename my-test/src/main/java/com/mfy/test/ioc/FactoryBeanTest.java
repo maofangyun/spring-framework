@@ -3,11 +3,11 @@ package com.mfy.test.ioc;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.stereotype.Component;
 
-@Component
+//@Component
 public class FactoryBeanTest implements FactoryBean<Son> {
 
 	/**
-	 * 手动调用beanFactory.getBean(Son.class),才会触发getObject()的执行
+	 * 手动调用beanFactory.getBean(Son.class)或者beanFactory.getBean("factoryBeanTest"),才会触发getObject()的执行
 	 * */
 	@Override
 	public Son getObject() {

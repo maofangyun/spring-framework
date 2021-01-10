@@ -1,6 +1,7 @@
 package com.mfy.test;
 
 import com.mfy.test.ioc.BeanConfig;
+import com.mfy.test.ioc.FactoryBeanTest;
 import com.mfy.test.ioc.Son;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
@@ -11,5 +12,7 @@ public class AnnotationACTest {
 		AnnotationConfigApplicationContext ac = new AnnotationConfigApplicationContext();
 		ac.register(BeanConfig.class);
 		ac.refresh();
+		Son son = (Son) ac.getBean("getFactoryBeanTest");
+		System.out.println(son);
 	}
 }

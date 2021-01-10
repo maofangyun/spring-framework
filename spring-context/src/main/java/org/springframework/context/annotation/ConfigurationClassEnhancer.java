@@ -294,6 +294,7 @@ class ConfigurationClassEnhancer {
 			String beanName = BeanAnnotationHelper.determineBeanNameFor(beanMethod);
 
 			// Determine whether this bean is a scoped-proxy
+			// 获取@bean配置的@Scope信息
 			if (BeanAnnotationHelper.isScopedProxy(beanMethod)) {
 				String scopedBeanName = ScopedProxyCreator.getTargetBeanName(beanName);
 				if (beanFactory.isCurrentlyInCreation(scopedBeanName)) {
@@ -308,14 +309,18 @@ class ConfigurationClassEnhancer {
 			// proxy that intercepts calls to getObject() and returns any cached bean instance.
 			// This ensures that the semantics of calling a FactoryBean from within @Bean methods
 			// is the same as that of referring to a FactoryBean within XML. See SPR-6602.
+			// 判断@Bean内部是否调用了另一个@Bean方法,且此方法的返回值类型是FactoryBean
 			if (factoryContainsBean(beanFactory, BeanFactory.FACTORY_BEAN_PREFIX + beanName) &&
 					factoryContainsBean(beanFactory, beanName)) {
+				// 获取FactoryBean接口实现类
 				Object factoryBean = beanFactory.getBean(BeanFactory.FACTORY_BEAN_PREFIX + beanName);
 				if (factoryBean instanceof ScopedProxyFactoryBean) {
 					// Scoped proxy factory beans are a special case and should not be further proxied
 				}
 				else {
 					// It is a candidate FactoryBean - go ahead with enhancement
+					// 返回FactoryBean接口实现类的cglib代理类,
+					// 原因:为了防止多个地方调用FactoryBean接口实现类的getObject()方法,导致返回值存在多个实例的情况出现
 					return enhanceFactoryBean(factoryBean, beanMethod.getReturnType(), beanFactory, beanName);
 				}
 			}
@@ -374,7 +379,8 @@ class ConfigurationClassEnhancer {
 						}
 					}
 				}
-				// 调用getBean()从容器中获取bean实例
+				// 调用getBean()从容器中获取bean实例,可能触发内部调用的@Bean方法的实例化逻辑
+				// "可能"的原因:看内部调用的@Bean方法,是否先被spring调用过
 				Object beanInstance = (useArgs ? beanFactory.getBean(beanName, beanMethodArgs) :
 						beanFactory.getBean(beanName));
 				if (!ClassUtils.isAssignableValue(beanMethod.getReturnType(), beanInstance)) {
@@ -556,6 +562,7 @@ class ConfigurationClassEnhancer {
 			}
 
 			((Factory) fbProxy).setCallback(0, (MethodInterceptor) (obj, method, args, proxy) -> {
+				// 专门拦截FactoryBean的getObject(),最终调用beanFactory.getBean(beanName),让spring来管理getObject()方法的返回值
 				if (method.getName().equals("getObject") && args.length == 0) {
 					return beanFactory.getBean(beanName);
 				}

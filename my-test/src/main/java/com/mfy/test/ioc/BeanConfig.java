@@ -11,8 +11,18 @@ import org.springframework.context.annotation.Import;
 public class BeanConfig {
 
 	@Bean
+	public FactoryBeanTest getFactoryBeanTest(){
+		return new FactoryBeanTest();
+	}
+
+	@Bean
 	public User getUser(){
 		this.getSon();
+		// 返回的是FactoryBeanTest的cglib代理对象
+		FactoryBeanTest factoryBeanTest = this.getFactoryBeanTest();
+		// getObject()会被拦截,最终调用beanFactory.getBean(beanName),beanName="getFactoryBeanTest"
+		Son son = factoryBeanTest.getObject();
+		System.out.println(son);
 		return new User();
 	}
 

@@ -147,7 +147,7 @@ public class SimpleInstantiationStrategy implements InstantiationStrategy {
 			else {
 				ReflectionUtils.makeAccessible(factoryMethod);
 			}
-			// 获取先前的被调用的FactoryMethod,注意,priorInvokedFactoryMethod没有结束调用,
+			// 获取上一个栈帧被调用的FactoryMethod,注意,priorInvokedFactoryMethod没有结束调用,
 			// 所以,在当前FactoryMethod调用完成之后,会重新放入currentlyInvokedFactoryMethod
 			Method priorInvokedFactoryMethod = currentlyInvokedFactoryMethod.get();
 			try {

@@ -50,6 +50,7 @@ abstract class BeanAnnotationHelper {
 			AnnotationAttributes bean =
 					AnnotatedElementUtils.findMergedAnnotationAttributes(beanMethod, Bean.class, false, false);
 			if (bean != null) {
+				// 获取@Bean指定的baenName
 				String[] names = bean.getStringArray("name");
 				if (names.length > 0) {
 					beanName = names[0];
