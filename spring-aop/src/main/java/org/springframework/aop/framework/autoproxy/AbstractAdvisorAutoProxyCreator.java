@@ -95,6 +95,7 @@ public abstract class AbstractAdvisorAutoProxyCreator extends AbstractAutoProxyC
 		List<Advisor> candidateAdvisors = findCandidateAdvisors();
 		// 筛选得到beanClass对应的通知器
 		List<Advisor> eligibleAdvisors = findAdvisorsThatCanApply(candidateAdvisors, beanClass, beanName);
+		// 针对@Aspect注解切面添加了一个默认的切面 DefaultPointcutAdvisor
 		extendAdvisors(eligibleAdvisors);
 		if (!eligibleAdvisors.isEmpty()) {
 			// 给合各个不同类型的通知器排序,为的是后续不同类型的通知器按顺序进行调用
@@ -109,7 +110,7 @@ public abstract class AbstractAdvisorAutoProxyCreator extends AbstractAutoProxyC
 	 */
 	protected List<Advisor> findCandidateAdvisors() {
 		Assert.state(this.advisorRetrievalHelper != null, "No BeanFactoryAdvisorRetrievalHelper available");
-		// advisorRetrievalHelper:从BeanFactory获取Advisor接口的实现类,用于自动代理
+		// advisorRetrievalHelper:从BeanFactory获取Advisor接口的实现类,用于后续的动态代理
 		return this.advisorRetrievalHelper.findAdvisorBeans();
 	}
 

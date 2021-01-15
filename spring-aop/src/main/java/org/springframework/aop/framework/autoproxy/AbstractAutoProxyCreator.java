@@ -356,7 +356,8 @@ public abstract class AbstractAutoProxyCreator extends ProxyProcessorSupport
 		if (Boolean.FALSE.equals(this.advisedBeans.get(cacheKey))) {
 			return bean;
 		}
-		// isInfrastructureClass():当beanClass是Advice,Pointcut,Advisor和AopInfrastructureBean接口的实现类时,返回true
+
+		// isInfrastructureClass():判断是否基础类,当beanClass是Advice,Pointcut,Advisor和AopInfrastructureBean接口的实现类时,返回true
 		// shouldSkip()作用:判断beanClass是否应该跳过代理
 		if (isInfrastructureClass(bean.getClass()) || shouldSkip(bean.getClass(), beanName)) {
 			this.advisedBeans.put(cacheKey, Boolean.FALSE);
@@ -470,8 +471,11 @@ public abstract class AbstractAutoProxyCreator extends ProxyProcessorSupport
 		}
 		// 创建代理工厂
 		ProxyFactory proxyFactory = new ProxyFactory();
+		// 将@EnableAspectJAutoProxy注解中指定的属性信息复制到proxyFactory中
 		proxyFactory.copyFrom(this);
 
+		// 设置proxyTargetClass的值到底是false(JDK)还是true(cglib),
+		// 即使在@EnableAspectJAutoProxy中指定了false,此处仍然可能会更改成true
 		if (!proxyFactory.isProxyTargetClass()) {
 			if (shouldProxyTargetClass(beanClass, beanName)) {
 				proxyFactory.setProxyTargetClass(true);
@@ -482,7 +486,9 @@ public abstract class AbstractAutoProxyCreator extends ProxyProcessorSupport
 		}
 		// 代理工厂有被代理类的所有通知器引用
 		Advisor[] advisors = buildAdvisors(beanName, specificInterceptors);
+		// 把advisor加入到proxyFactory
 		proxyFactory.addAdvisors(advisors);
+		// 把targetSource对象(被代理对象)加入到proxyFactory
 		proxyFactory.setTargetSource(targetSource);
 		customizeProxyFactory(proxyFactory);
 

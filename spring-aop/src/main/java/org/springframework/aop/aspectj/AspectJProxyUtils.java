@@ -55,6 +55,7 @@ public abstract class AspectJProxyUtils {
 				}
 			}
 			if (foundAspectJAdvice && !advisors.contains(ExposeInvocationInterceptor.ADVISOR)) {
+				// 在通知器集合的头部添加一个DefaultPointcutAdvisor的通知器
 				advisors.add(0, ExposeInvocationInterceptor.ADVISOR);
 				return true;
 			}

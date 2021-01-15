@@ -223,8 +223,9 @@ public abstract class AopUtils {
 	 */
 	public static boolean canApply(Pointcut pc, Class<?> targetClass, boolean hasIntroductions) {
 		Assert.notNull(pc, "Pointcut must not be null");
+		// 判断类是否匹配PointCut
 		// 判断Pointcut是否匹配targetClass
-		// 对于事务的Pointcut,底层的逻辑是匹配targetClass的方法中是否有@Transactional注解
+		// 对于事务的Pointcut,底层的逻辑是匹配targetClass的方法中是否有@Transactional注解(假的,底层啥都没做)
 		if (!pc.getClassFilter().matches(targetClass)) {
 			return false;
 		}
@@ -246,6 +247,7 @@ public abstract class AopUtils {
 		}
 		classes.addAll(ClassUtils.getAllInterfacesForClassAsSet(targetClass));
 
+		// 判断方法是否匹配Pointcut
 		// 对targetClass的所有父类的方法进行匹配,只要有一个method能匹配到通知,直接返回true
 		for (Class<?> clazz : classes) {
 			Method[] methods = ReflectionUtils.getAllDeclaredMethods(clazz);

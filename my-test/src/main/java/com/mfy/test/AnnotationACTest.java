@@ -12,7 +12,5 @@ public class AnnotationACTest {
 		AnnotationConfigApplicationContext ac = new AnnotationConfigApplicationContext();
 		ac.register(BeanConfig.class);
 		ac.refresh();
-		Son son = (Son) ac.getBean("getFactoryBeanTest");
-		System.out.println(son);
 	}
 }
