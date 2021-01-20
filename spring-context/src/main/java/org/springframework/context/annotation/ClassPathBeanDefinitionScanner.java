@@ -277,6 +277,7 @@ public class ClassPathBeanDefinitionScanner extends ClassPathScanningCandidateCo
 			// 找出全部@Component注解的bean,并筛选出符合给定条件的
 			Set<BeanDefinition> candidates = findCandidateComponents(basePackage);
 			for (BeanDefinition candidate : candidates) {
+				// 获取@Scope注解的属性信息
 				ScopeMetadata scopeMetadata = this.scopeMetadataResolver.resolveScopeMetadata(candidate);
 				candidate.setScope(scopeMetadata.getScopeName());
 				String beanName = this.beanNameGenerator.generateBeanName(candidate, this.registry);
@@ -291,6 +292,8 @@ public class ClassPathBeanDefinitionScanner extends ClassPathScanningCandidateCo
 				// 检查candidate是否已经放入了beanDefinitionMap
 				if (checkCandidate(beanName, candidate)) {
 					BeanDefinitionHolder definitionHolder = new BeanDefinitionHolder(candidate, beanName);
+					// 处理@Scope注解,对于ScopedProxyMode.TARGET_CLASS属性,返回一个beanName=beanName,
+					// beanClass=ScopedProxyFactoryBean.class的代理beanDefinition,并且在@Autowired自动装配时,会优先装配代理类型
 					definitionHolder =
 							AnnotationConfigUtils.applyScopedProxyMode(scopeMetadata, definitionHolder, this.registry);
 					beanDefinitions.add(definitionHolder);

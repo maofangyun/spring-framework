@@ -673,6 +673,7 @@ class CglibAopProxy implements AopProxy, Serializable {
 					setProxyContext = true;
 				}
 				// Get as late as possible to minimize the time we "own" the target, in case it comes from a pool...
+				// 对于SimpleBeanTargetSource类型的targetSource,调用getTarget()时,从beanFactory.getBean()中获取原型实例对象
 				target = targetSource.getTarget();
 				Class<?> targetClass = (target != null ? target.getClass() : null);
 				// 获取目标类的方法所有的通知器,并将通知器通过适配器包装成MethodInterceptor接口的实现类

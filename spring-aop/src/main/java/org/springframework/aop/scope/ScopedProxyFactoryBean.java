@@ -27,6 +27,7 @@ import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.FactoryBeanNotInitializedException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
@@ -80,6 +81,7 @@ public class ScopedProxyFactoryBean extends ProxyConfig
 	 */
 	public void setTargetBeanName(String targetBeanName) {
 		this.targetBeanName = targetBeanName;
+		// 设置beanName,在SimpleBeanTargetSource.getTarget()时,通过targetBeanName从beanFactory中获取原型实例对象
 		this.scopedTargetSource.setTargetBeanName(targetBeanName);
 	}
 
@@ -91,9 +93,10 @@ public class ScopedProxyFactoryBean extends ProxyConfig
 		ConfigurableBeanFactory cbf = (ConfigurableBeanFactory) beanFactory;
 
 		this.scopedTargetSource.setBeanFactory(beanFactory);
-
+		// 由于实现了BeanFactoryAware接口,在实例化bean的初始化阶段,会调用此方法
 		ProxyFactory pf = new ProxyFactory();
 		pf.copyFrom(this);
+		// 给ProxyFactory添加targetSource,后续AOP调用,通过targetSource获取被代理的对象
 		pf.setTargetSource(this.scopedTargetSource);
 
 		Assert.notNull(this.targetBeanName, "Property 'targetBeanName' is required");
@@ -108,6 +111,8 @@ public class ScopedProxyFactoryBean extends ProxyConfig
 
 		// Add an introduction that implements only the methods on ScopedObject.
 		ScopedObject scopedObject = new DefaultScopedObject(cbf, this.scopedTargetSource.getTargetBeanName());
+		// 添加DelegatingIntroductionInterceptor的通知,这个通知其实啥都没有做,就是传递了一下火炬,
+		// @Autowired+原型的实现:主要是AOP调用前,获取实例对象时,通过SimpleBeanTargetSource.getTarget()做到的
 		pf.addAdvice(new DelegatingIntroductionInterceptor(scopedObject));
 
 		// Add the AopInfrastructureBean marker to indicate that the scoped proxy

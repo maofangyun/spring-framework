@@ -31,13 +31,15 @@ public class AspectBean {
 	}
 
 	@Around("pc1()")
-	public void aroundTest(ProceedingJoinPoint pjp) throws Throwable {
+	public Object aroundTest(ProceedingJoinPoint pjp) throws Throwable {
 		System.out.println("环绕增强----> around  前置增强");
-		pjp.proceed();
+		Object proceed = pjp.proceed();
 		System.out.println("环绕增强----> around  后置增强");
+		// 一定要有返回值,不然被代理方法会返回null
+		return proceed;
 	}
 
-	@AfterReturning("pc1()")
+	//@AfterReturning("pc1()")
 	public void afterReturningTest(JoinPoint joinPoint){
 		System.out.println("返回增强 -----> afterReturning");
 	}
