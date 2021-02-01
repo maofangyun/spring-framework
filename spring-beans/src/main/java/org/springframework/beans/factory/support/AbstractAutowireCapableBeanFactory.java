@@ -603,6 +603,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 			// 给bean的属性赋值(自动注入)
 			populateBean(beanName, mbd, instanceWrapper);
 			// 初始化bean,调用bean的init()方法,并且遍历所有bean的postProcessors
+			// 对于有循环依赖的代理对象(走AbstractAutoProxyCreator逻辑的)来说,这里返回的是原始的被代理对象
 			exposedObject = initializeBean(beanName, exposedObject, mbd);
 		}
 		catch (Throwable ex) {
@@ -616,10 +617,13 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		}
 
 		if (earlySingletonExposure) {
+			// allowEarlyReference=false:表示从一级缓存或者二级缓存获取实例对象(此处基本是从二级缓存取值)
 			Object earlySingletonReference = getSingleton(beanName, false);
+			// 这个判断为true,表示该bean存在循环依赖,因为从二级缓存中取到了值
 			if (earlySingletonReference != null) {
-				// 对于循环依赖中,涉及到aop代理的,此处将bean替换成aop的代理对象(代理对象从earlySingletonObjects缓存中取出)
+				// 对于循环依赖中,涉及到aop代理的,这里判断肯定是true
 				if (exposedObject == bean) {
+					// 此处将bean替换成aop的代理对象(代理对象从earlySingletonObjects缓存中取出)
 					exposedObject = earlySingletonReference;
 				}
 				else if (!this.allowRawInjectionDespiteWrapping && hasDependentBean(beanName)) {

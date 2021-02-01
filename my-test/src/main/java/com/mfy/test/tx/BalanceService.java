@@ -16,7 +16,7 @@ public class BalanceService {
 	@Autowired
 	private DynamicDataSource dataSource;
 
-	@Transactional(propagation= Propagation.NESTED,rollbackFor = {SQLException.class})
+	@Transactional(propagation= Propagation.REQUIRED,rollbackFor = {SQLException.class})
 	public void insertBalance(String name,String acount) throws SQLException {
 		DynamicDataSource.setDataSource("ds1");
 		Connection connection = dataSource.getConnection();

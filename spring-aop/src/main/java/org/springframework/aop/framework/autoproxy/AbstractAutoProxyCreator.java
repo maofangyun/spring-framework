@@ -245,7 +245,7 @@ public abstract class AbstractAutoProxyCreator extends ProxyProcessorSupport
 	}
 
 	/**
-	 * 收集需要跳过代理的对象信息
+	 * 收集需要跳过代理的对象信息.
 	 * */
 	@Override
 	public Object postProcessBeforeInstantiation(Class<?> beanClass, String beanName) {
@@ -309,7 +309,12 @@ public abstract class AbstractAutoProxyCreator extends ProxyProcessorSupport
 		if (bean != null) {
 			// 当beanClass是FactoryBean接口的实现类时,返回&+beanName
 			Object cacheKey = getCacheKey(bean.getClass(), beanName);
+			// 根据earlyProxyReferences中cacheKey所关联的实例对象和bean是否相同,可以判断出该bean是否存在循环依赖,
+			// 若有循环依赖,必定会从三级缓存中调用getObject()方法,调用到getEarlyBeanReference()时,也会调用wrapIfNecessary(),
+			// 会提前生成代理对象注入到依赖的属性值和spring容器中,所以这里就不需要再次生成bean的代理对象了,避免容器中存在多个代理对象;
+			// 若不存在循环依赖,这个判断肯定是true,会生成代理对象返回
 			if (this.earlyProxyReferences.remove(cacheKey) != bean) {
+				// 代码能走到这里,说明bean不存在循环依赖
 				// 返回被bean所匹配的通知器增强的代理对象,步骤:
 				// 1.判断bean是否应该跳过代理
 				// 2.收集bean所对应的通知器

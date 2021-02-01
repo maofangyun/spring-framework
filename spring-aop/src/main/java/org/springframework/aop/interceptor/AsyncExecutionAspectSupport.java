@@ -161,21 +161,27 @@ public abstract class AsyncExecutionAspectSupport implements BeanFactoryAware {
 	 */
 	@Nullable
 	protected AsyncTaskExecutor determineAsyncExecutor(Method method) {
+		// 从缓存获取要执行方法对应的线程池
 		AsyncTaskExecutor executor = this.executors.get(method);
 		if (executor == null) {
 			Executor targetExecutor;
+			// 获取@Async注解中指定的线程池名称
 			String qualifier = getExecutorQualifier(method);
 			if (StringUtils.hasLength(qualifier)) {
+				// 若方法上的@Async注解指定了线程池,从spring容器中获取指定名称的线程池对象
 				targetExecutor = findQualifiedExecutor(this.beanFactory, qualifier);
 			}
 			else {
+				// 若没有指定,则获取默认的线程池对象
 				targetExecutor = this.defaultExecutor.get();
 			}
 			if (targetExecutor == null) {
 				return null;
 			}
+			// 适配器模式,将executor转变成AsyncListenableTaskExecutor接口的实现类
 			executor = (targetExecutor instanceof AsyncListenableTaskExecutor ?
 					(AsyncListenableTaskExecutor) targetExecutor : new TaskExecutorAdapter(targetExecutor));
+			// 缓存方法和线程池的对应关系
 			this.executors.put(method, executor);
 		}
 		return executor;
@@ -270,6 +276,7 @@ public abstract class AsyncExecutionAspectSupport implements BeanFactoryAware {
 	 */
 	@Nullable
 	protected Object doSubmit(Callable<Object> task, AsyncTaskExecutor executor, Class<?> returnType) {
+		// 根据不同的返回值类型,采用不同的方案去异步执行
 		if (CompletableFuture.class.isAssignableFrom(returnType)) {
 			return CompletableFuture.supplyAsync(() -> {
 				try {
@@ -286,7 +293,7 @@ public abstract class AsyncExecutionAspectSupport implements BeanFactoryAware {
 		else if (Future.class.isAssignableFrom(returnType)) {
 			return executor.submit(task);
 		}
-		else {
+		else {	// 没有返回值的情况
 			executor.submit(task);
 			return null;
 		}

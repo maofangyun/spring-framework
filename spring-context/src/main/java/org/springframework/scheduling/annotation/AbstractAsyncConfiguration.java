@@ -54,6 +54,7 @@ public abstract class AbstractAsyncConfiguration implements ImportAware {
 
 	@Override
 	public void setImportMetadata(AnnotationMetadata importMetadata) {
+		// 获取@EnableAsync注解的元数据信息
 		this.enableAsync = AnnotationAttributes.fromMap(
 				importMetadata.getAnnotationAttributes(EnableAsync.class.getName(), false));
 		if (this.enableAsync == null) {
@@ -64,6 +65,7 @@ public abstract class AbstractAsyncConfiguration implements ImportAware {
 
 	/**
 	 * Collect any {@link AsyncConfigurer} beans through autowiring.
+	 * 对象实例化阶段,会执行此方法
 	 */
 	@Autowired(required = false)
 	void setConfigurers(Collection<AsyncConfigurer> configurers) {
@@ -74,6 +76,7 @@ public abstract class AbstractAsyncConfiguration implements ImportAware {
 			throw new IllegalStateException("Only one AsyncConfigurer may exist");
 		}
 		AsyncConfigurer configurer = configurers.iterator().next();
+		// 配置自定义的线程池
 		this.executor = configurer::getAsyncExecutor;
 		this.exceptionHandler = configurer::getAsyncUncaughtExceptionHandler;
 	}

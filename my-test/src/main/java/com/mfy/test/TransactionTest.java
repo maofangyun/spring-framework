@@ -13,7 +13,6 @@ public class TransactionTest {
 		ac.register(TransConfig.class);
 		ac.refresh();
 		UserBalanceService ubs = ac.getBean(UserBalanceService.class);
-		ubs.test();
 		ubs.insert("张三","1000");
 	}
 }

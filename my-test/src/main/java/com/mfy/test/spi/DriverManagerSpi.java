@@ -35,8 +35,13 @@ public class DriverManagerSpi {
 			 * 	static {
 			 * 		loadInitialDrivers();
 			 *  }
+			 *  loadInitialDrivers()的代码流程:
+			 *  	1. 找出所有加载的jar包下路径为META-INF.services/java.sql.Driver的文件
+			 *  	2. 读取文件中的全限定类名称,放入一个集合
+			 *  	3. 遍历集合,通过Class.forName()得到Class对象,再通过class.newInstance()得到实例对象(驱动)
+			 *  	4. 实例化过程中,会将实例对象(驱动)注册到registeredDrivers中
 			 * 	loadInitialDrivers()会调用如下代码:
-			 * 		// 指定了要加载Driver.class,同时使用Thread.currentThread().getContextClassLoader()的类加载器(即AppClassLoader)
+			 * 		指定了要加载Driver.class,同时使用Thread.currentThread().getContextClassLoader()的类加载器(即AppClassLoader)
 			 * 		ServiceLoader<Driver> loadedDrivers = ServiceLoader.load(Driver.class);
 			 * 		Iterator<Driver> driversIterator = loadedDrivers.iterator();
 			 * 	    while(driversIterator.hasNext()) {

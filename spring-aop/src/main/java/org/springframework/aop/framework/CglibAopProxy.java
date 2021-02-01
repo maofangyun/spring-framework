@@ -667,6 +667,7 @@ class CglibAopProxy implements AopProxy, Serializable {
 			// advised的类型是ProxyFactory(生成bean的代理类时,new出来的),包含了bean实例和bean匹配的通知器
 			TargetSource targetSource = this.advised.getTargetSource();
 			try {
+				// @EnableAspectJAutoProxy(exposeProxy = true)会进入此代码块
 				if (this.advised.exposeProxy) {
 					// Make invocation available if necessary.
 					oldProxy = AopContext.setCurrentProxy(proxy);

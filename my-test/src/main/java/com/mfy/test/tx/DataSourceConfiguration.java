@@ -43,9 +43,9 @@ public class DataSourceConfiguration {
 		ComboPooledDataSource dataSource2 = new ComboPooledDataSource();
 		try {
 			dataSource2.setDriverClass("com.mysql.cj.jdbc.Driver");
-			dataSource2.setJdbcUrl("jdbc:mysql://47.96.126.175:3306/localtest?useSSL=false&serverTimezone=UTC");
+			dataSource2.setJdbcUrl("jdbc:mysql://47.92.1.153:3307/localtest?useSSL=false&serverTimezone=UTC");
 			dataSource2.setUser("root");
-			dataSource2.setPassword("#lzdong#p");
+			dataSource2.setPassword("123456");
 			dataSource2.setMinPoolSize(10);
 			dataSource2.setMaxPoolSize(100);
 			dataSource2.setMaxIdleTime(1800);

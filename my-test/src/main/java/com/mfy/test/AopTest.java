@@ -14,6 +14,8 @@ public class AopTest {
 		IndexService bean = ac.getBean(IndexService.class);
 		UserService userService = bean.getUserService();
 		System.out.println(userService);
+		//UserService userService = bean.getUserService();
+		//System.out.println(userService);
 		//CustomBean bean = ac.getBean(CustomBean.class);
 		//bean.test();
 		//bean.test();
