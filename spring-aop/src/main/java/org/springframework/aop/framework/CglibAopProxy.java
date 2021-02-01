@@ -658,6 +658,9 @@ class CglibAopProxy implements AopProxy, Serializable {
 			this.advised = advised;
 		}
 
+		/**
+		 * DynamicAdvisedInterceptor是入口类的拦截器
+		 * */
 		@Override
 		@Nullable
 		public Object intercept(Object proxy, Method method, Object[] args, MethodProxy methodProxy) throws Throwable {
@@ -667,7 +670,8 @@ class CglibAopProxy implements AopProxy, Serializable {
 			// advised的类型是ProxyFactory(生成bean的代理类时,new出来的),包含了bean实例和bean匹配的通知器
 			TargetSource targetSource = this.advised.getTargetSource();
 			try {
-				// @EnableAspectJAutoProxy(exposeProxy = true)会进入此代码块
+				// @EnableAspectJAutoProxy(exposeProxy = true)
+				// 将目前正在调用的代理对象放入一个ThreadLocal对象中,暴露出来给其他地方调用
 				if (this.advised.exposeProxy) {
 					// Make invocation available if necessary.
 					oldProxy = AopContext.setCurrentProxy(proxy);

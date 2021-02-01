@@ -14,5 +14,6 @@ public class TransactionTest {
 		ac.refresh();
 		UserBalanceService ubs = ac.getBean(UserBalanceService.class);
 		ubs.insert("张三","1000");
+		System.out.println("main线程运行结束");
 	}
 }
