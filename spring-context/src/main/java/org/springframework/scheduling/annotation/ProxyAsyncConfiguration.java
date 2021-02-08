@@ -45,6 +45,8 @@ public class ProxyAsyncConfiguration extends AbstractAsyncConfiguration {
 	@Role(BeanDefinition.ROLE_INFRASTRUCTURE)
 	public AsyncAnnotationBeanPostProcessor asyncAdvisor() {
 		Assert.notNull(this.enableAsync, "@EnableAsync annotation metadata was not injected");
+		// 这里的AsyncAnnotationBeanPostProcessor实现了Order接口,优先级是最低的,也就是说,各种后置方法是最后执行的;
+		// 原因:保证其他后置方法都执行完毕,若有代理对象,这时肯定已经生成了,所以方便向代理对象添加一个排在最前面异步的通知器
 		AsyncAnnotationBeanPostProcessor bpp = new AsyncAnnotationBeanPostProcessor();
 		bpp.configure(this.executor, this.exceptionHandler);
 		Class<? extends Annotation> customAsyncAnnotation = this.enableAsync.getClass("annotation");

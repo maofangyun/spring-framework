@@ -89,6 +89,7 @@ public class AsyncAnnotationBeanPostProcessor extends AbstractBeanFactoryAwareAd
 
 
 	public AsyncAnnotationBeanPostProcessor() {
+		// 设置异步切面的执行顺序排在最前面
 		setBeforeExistingAdvisors(true);
 	}
 
@@ -145,7 +146,11 @@ public class AsyncAnnotationBeanPostProcessor extends AbstractBeanFactoryAwareAd
 	@Override
 	public void setBeanFactory(BeanFactory beanFactory) {
 		super.setBeanFactory(beanFactory);
-
+		// 这里直接new出来了Advisor,所以这个Advisor并不在spring容器中管理;
+		// 原因:为了保证这个Advisor在调用链排第一个,即最先执行这个Advisor的逻辑,至于为什么要先执行这个异步的切面,
+		// 因为在一个方法执行流程中,最好开始就异步,中途异步,很容易出错
+		// 如何办到的?
+		// postProcessAfterInitialization的advised.addAdvisor(0, this.advisor)
 		AsyncAnnotationAdvisor advisor = new AsyncAnnotationAdvisor(this.executor, this.exceptionHandler);
 		if (this.asyncAnnotationType != null) {
 			advisor.setAsyncAnnotationType(this.asyncAnnotationType);

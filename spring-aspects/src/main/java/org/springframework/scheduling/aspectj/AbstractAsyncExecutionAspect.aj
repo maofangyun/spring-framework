@@ -71,6 +71,7 @@ public abstract aspect AbstractAsyncExecutionAspect extends AsyncExecutionAspect
 		}
 
 		Callable<Object> task = new Callable<Object>() {
+			@Override
 			public Object call() throws Exception {
 				try {
 					Object result = proceed();

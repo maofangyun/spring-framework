@@ -68,6 +68,7 @@ public abstract class AbstractAdvisingBeanPostProcessor extends ProxyProcessorSu
 			return bean;
 		}
 
+		// 若这个判断是true,表明这个bean已经是cglib的代理类了,所以不需要再生成代理类了,只需要把advisor添加进去就行
 		if (bean instanceof Advised) {
 			Advised advised = (Advised) bean;
 			if (!advised.isFrozen() && isEligible(AopUtils.getTargetClass(bean))) {
