@@ -611,10 +611,10 @@ public class WebMvcConfigurationSupport implements ApplicationContextAware, Serv
 			@Qualifier("mvcContentNegotiationManager") ContentNegotiationManager contentNegotiationManager,
 			@Qualifier("mvcConversionService") FormattingConversionService conversionService,
 			@Qualifier("mvcValidator") Validator validator) {
-
+		// 默认的众多入参解析器,返回值解析器和绑定器参数解析器,在bean初始化阶段,调用afterPropertiesSet()时,会注册到adapter中
 		RequestMappingHandlerAdapter adapter = createRequestMappingHandlerAdapter();
 		adapter.setContentNegotiationManager(contentNegotiationManager);
-		// 添加消息转换器
+		// 添加消息转换器(包括自定义的和默认的HTTP消息转换器)
 		adapter.setMessageConverters(getMessageConverters());
 		adapter.setWebBindingInitializer(getConfigurableWebBindingInitializer(conversionService, validator));
 		// 添加自定义的入参解析器
@@ -813,7 +813,7 @@ public class WebMvcConfigurationSupport implements ApplicationContextAware, Serv
 			this.messageConverters = new ArrayList<>();
 			configureMessageConverters(this.messageConverters);
 			if (this.messageConverters.isEmpty()) {
-				// 添加默认的消息转换器
+				// 添加默认的HTTP消息转换器
 				addDefaultHttpMessageConverters(this.messageConverters);
 			}
 			extendMessageConverters(this.messageConverters);

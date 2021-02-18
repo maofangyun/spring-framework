@@ -1238,7 +1238,8 @@ public class DispatcherServlet extends FrameworkServlet {
 	@Nullable
 	protected HandlerExecutionChain getHandler(HttpServletRequest request) throws Exception {
 		if (this.handlerMappings != null) {
-			// handlerMappings的数据,是初始化DispatcherServlet的时候加入的,initStrategies()->initHandlerMappings()
+			// handlerMappings中的数据,是初始化DispatcherServlet的时候加入的,initStrategies()->initHandlerMappings()
+			// 通过WebMvcConfigurationSupport的@Bean方式,注入spring容器
 			for (HandlerMapping mapping : this.handlerMappings) {
 				// 获取该request的请求执行链(包含HandlerMethod和HandlerInterceptor)
 				HandlerExecutionChain handler = mapping.getHandler(request);
