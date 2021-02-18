@@ -60,7 +60,7 @@ public abstract class AbstractContextLoaderInitializer implements WebApplication
 		// 创建父容器
 		WebApplicationContext rootAppContext = createRootApplicationContext();
 		if (rootAppContext != null) {
-			// 创建的监听器,并将父容器加入到监听器中
+			// 创建的监听器,并将父容器加入到监听器中,监听servlet容器的初始化事件,完成父容器的启动工作,因此父容器是在servlet容器初始化时启动的
 			// 相当于如下的web.xml文件
 			//  <listener>
 			//    <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>

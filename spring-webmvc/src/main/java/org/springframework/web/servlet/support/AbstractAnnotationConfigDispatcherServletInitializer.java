@@ -76,8 +76,10 @@ public abstract class AbstractAnnotationConfigDispatcherServletInitializer
 	protected WebApplicationContext createServletApplicationContext() {
 		// 创建子容器
 		AnnotationConfigWebApplicationContext context = new AnnotationConfigWebApplicationContext();
+		// 获取子容器的配置类
 		Class<?>[] configClasses = getServletConfigClasses();
 		if (!ObjectUtils.isEmpty(configClasses)) {
+			// 将配置类注册到子容器中,保证子容器启动时,可以扫描到配置信息
 			context.register(configClasses);
 		}
 		return context;
