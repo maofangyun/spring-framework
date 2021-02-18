@@ -272,6 +272,7 @@ public abstract class AbstractHandlerMethodMapping<T> extends AbstractHandlerMap
 
 		if (handlerType != null) {
 			Class<?> userType = ClassUtils.getUserClass(handlerType);
+			// 返回的map,缓存Method和RequestMappingInfo的映射关系
 			Map<Method, T> methods = MethodIntrospector.selectMethods(userType,
 					(MethodIntrospector.MetadataLookup<T>) method -> {	// metadataLookup.inspect(specificMethod);
 						try {
@@ -622,6 +623,7 @@ public abstract class AbstractHandlerMethodMapping<T> extends AbstractHandlerMap
 				List<String> directUrls = getDirectUrls(mapping);
 				for (String url : directUrls) {
 					// 绑定映射地址和requestMappingInfo(数组)的关系
+					// urlLookup是MultiValueMap类型的,当add()并且key值相同,由于value类型是List,所以会累加起来
 					this.urlLookup.add(url, mapping);
 				}
 

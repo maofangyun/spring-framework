@@ -77,6 +77,8 @@ public final class MethodIntrospector {
 				// 这个地方又是一个回调的方法 真正的解析获取RequestMappingInfo的地方
 				T result = metadataLookup.inspect(specificMethod);
 				if (result != null) {
+					// 获取桥接方法,其实就是返回值类型更广泛了;
+					// 桥接方法的出现原因:子类中进行重写的方法跟父类不一致(参数不一致或者返回值不一致)
 					Method bridgedMethod = BridgeMethodResolver.findBridgedMethod(specificMethod);
 					if (bridgedMethod == specificMethod || metadataLookup.inspect(bridgedMethod) == null) {
 						// 缓存Method和RequestMappingInfo的映射关系
