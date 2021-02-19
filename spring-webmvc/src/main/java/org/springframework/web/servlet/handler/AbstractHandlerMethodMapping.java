@@ -398,6 +398,7 @@ public abstract class AbstractHandlerMethodMapping<T> extends AbstractHandlerMap
 		// 通过请求地址lookupPath,从urlLookup缓存中获取requestMappingInfo(数组)
 		List<T> directPathMatches = this.mappingRegistry.getMappingsByUrl(lookupPath);
 		if (directPathMatches != null) {
+			// 通过request的信息得到匹配的RequestMappingInfo,并且填充到matches中
 			addMatchingMappings(directPathMatches, matches, request);
 		}
 		if (matches.isEmpty()) {

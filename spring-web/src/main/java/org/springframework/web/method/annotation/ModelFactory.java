@@ -104,7 +104,7 @@ public final class ModelFactory {
 		Map<String, ?> sessionAttributes = this.sessionAttributesHandler.retrieveAttributes(request);
 		// 将取出的参数,合并到mavContainer中
 		container.mergeAttributes(sessionAttributes);
-		// 执行注释了@ModelAttribute的方法并将结果设置到Model
+		// 反射调用标注了@ModelAttribute的方法并将返回值保存到mavContainer
 		invokeModelAttributeMethods(request, container);
 
 		for (String name : findSessionAttributeArguments(handlerMethod)) {

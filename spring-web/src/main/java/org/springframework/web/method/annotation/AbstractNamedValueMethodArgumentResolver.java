@@ -120,7 +120,7 @@ public abstract class AbstractNamedValueMethodArgumentResolver implements Handle
 		}
 
 		if (binderFactory != null) {
-			// 反射调用@InitBinder注解的方法
+			// 反射调用@InitBinder注解的方法,实际上就是向WebDataBinder中注册新的类型绑定组件
 			WebDataBinder binder = binderFactory.createBinder(webRequest, null, namedValueInfo.name);
 			try {
 				// 利用@InitBinder注解注入的组件转换入参

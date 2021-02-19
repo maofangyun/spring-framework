@@ -852,7 +852,7 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
 		try {
 			// 解析@InitBinder注解,WebDataBinderFactory用于生成WebDataBinder(作用是将请求中的入参,绑定到java的bean上)
 			WebDataBinderFactory binderFactory = getDataBinderFactory(handlerMethod);
-			// 解析@ModelAttribute注解
+			// 解析并收集@ModelAttribute注解和@SessionAttributes注解
 			// ModelFactory主要包括两个功能:初始化Model和将Model中的参数更新到SessionAttributes中
 			ModelFactory modelFactory = getModelFactory(handlerMethod, binderFactory);
 
