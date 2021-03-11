@@ -32,7 +32,7 @@ public class UserBalanceService {
 	 * 但是如果父级异常,子事务必然回滚,这就是和REQUIRES_NEW的区别
 	 * */
 	@Transactional
-	@Async
+	//@Async
 	public void insert(String name,String acount) throws SQLException {
 		// 事务同步处理器只能在这里注册,因为synchronizations只有在事务开启后,才会初始化
 		TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronizationHandler());

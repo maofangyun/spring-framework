@@ -329,7 +329,8 @@ public abstract class TransactionAspectSupport implements BeanFactoryAware, Init
 	protected Object invokeWithinTransaction(Method method, @Nullable Class<?> targetClass,
 			final InvocationCallback invocation) throws Throwable {
 
-		// 在解析@EnableTransactionManagement注解时,会注入ProxyTransactionManagementConfiguration,并使用@bean注入transactionAttributeSource
+		// 在解析@EnableTransactionManagement注解时,会注入ProxyTransactionManagementConfiguration,并使用@bean注入transactionAttributeSource,
+		// 在pointcut和方法进行匹配时,会解析@Transactional的信息,封装成TransactionAttribute,
 		// transactionAttributeSource缓存了@Transactional的方法名称和解析出来的@Transactional属性信息(TransactionAttribute)的映射关系
 		TransactionAttributeSource tas = getTransactionAttributeSource();
 		final TransactionAttribute txAttr = (tas != null ? tas.getTransactionAttribute(method, targetClass) : null);

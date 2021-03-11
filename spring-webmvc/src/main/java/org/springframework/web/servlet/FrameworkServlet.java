@@ -593,7 +593,8 @@ public abstract class FrameworkServlet extends HttpServletBean implements Applic
 			// No context instance is defined for this servlet -> create a local one
 			wac = createWebApplicationContext(rootContext);
 		}
-
+		// 下面的判断一般不会进入,在子容器刷新完成之后,发布的ContextRefreshedEvent事件,将被ContextRefreshListener(FrameworkServlet的内部类)监听到,
+		// 并执行onRefresh(wac)逻辑,同时将refreshEventReceived置为true,防止多次初始化DispatcherServlet的组件
 		if (!this.refreshEventReceived) {
 			// Either the context is not a ConfigurableApplicationContext with refresh
 			// support or the context injected at construction time had already been
