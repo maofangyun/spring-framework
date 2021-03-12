@@ -374,7 +374,7 @@ public abstract class TransactionAspectSupport implements BeanFactoryAware, Init
 				throw ex;
 			}
 			finally {
-				// 将TransactionInfo中的属性transactionInfoHolder置为最外层事物的txInfo
+				// 将TransactionInfo中的属性transactionInfoHolder置为最外层事务的txInfo
 				cleanupTransactionInfo(txInfo);
 			}
 
@@ -638,7 +638,7 @@ public abstract class TransactionAspectSupport implements BeanFactoryAware, Init
 			if (logger.isTraceEnabled()) {
 				logger.trace("Completing transaction for [" + txInfo.getJoinpointIdentification() + "]");
 			}
-			// 提交事物
+			// 提交事务
 			txInfo.getTransactionManager().commit(txInfo.getTransactionStatus());
 		}
 	}
@@ -658,7 +658,7 @@ public abstract class TransactionAspectSupport implements BeanFactoryAware, Init
 			// 判断@Transactional的rollbackFor属性,是否包含了ex类型的异常
 			if (txInfo.transactionAttribute != null && txInfo.transactionAttribute.rollbackOn(ex)) {
 				try {
-					// 回滚事物
+					// 回滚事务
 					txInfo.getTransactionManager().rollback(txInfo.getTransactionStatus());
 				}
 				catch (TransactionSystemException ex2) {
@@ -668,7 +668,7 @@ public abstract class TransactionAspectSupport implements BeanFactoryAware, Init
 				}
 				catch (RuntimeException | Error ex2) {
 					logger.error("Application exception overridden by rollback exception", ex);
-					// 需要抛出导致事物回滚的异常
+					// 需要抛出导致事务回滚的异常
 					throw ex2;
 				}
 			}

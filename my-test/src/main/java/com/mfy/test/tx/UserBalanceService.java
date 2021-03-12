@@ -1,5 +1,6 @@
 package com.mfy.test.tx;
 
+import com.mfy.test.ioc.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -33,12 +34,12 @@ public class UserBalanceService {
 	 * */
 	@Transactional
 	//@Async
-	public void insert(String name,String acount) throws SQLException {
+	public void insert(User user,String acount) throws SQLException {
 		// 事务同步处理器只能在这里注册,因为synchronizations只有在事务开启后,才会初始化
 		TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronizationHandler());
-		userService.insertUser(name);
+		userService.insertUser(user);
 		try {
-			balanceService.insertBalance(name, acount);
+			balanceService.insertBalance(user.getName(), acount);
 		}
 		catch (RuntimeException e){
 			e.printStackTrace();

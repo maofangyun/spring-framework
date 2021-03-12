@@ -1,11 +1,14 @@
 package com.mfy.test.tx;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.datasource.ConnectionHolder;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
+import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -14,12 +17,12 @@ import java.sql.SQLException;
 public class BalanceService {
 
 	@Autowired
-	private DynamicDataSource dataSource;
+	private DataSource dataSource;
 
-	@Transactional(propagation= Propagation.REQUIRED,rollbackFor = {SQLException.class})
+	@Transactional(propagation= Propagation.REQUIRED,rollbackFor = {Exception.class})
 	public void insertBalance(String name,String acount) throws SQLException {
-		DynamicDataSource.setDataSource("ds1");
-		Connection connection = dataSource.getConnection();
+		ConnectionHolder connectionHolder = (ConnectionHolder) TransactionSynchronizationManager.getResource(dataSource);
+		Connection connection = connectionHolder.getConnection();
 		String sql = "INSERT INTO user_balance(name,balance) VALUES (?,?)";
 		//获取PreparedStatement对象
 		PreparedStatement ps = connection.prepareStatement(sql);

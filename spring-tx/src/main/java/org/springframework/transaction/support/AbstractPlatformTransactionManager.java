@@ -916,7 +916,7 @@ public abstract class AbstractPlatformTransactionManager implements PlatformTran
 		}
 		finally {
 			// 只有独立事务或者最外层的事务才会走下面的流程:
-			// 1. 设置status为完成状态
+			// 1. 设置status为完成状态(都会走)
 			// 2. 清除TransactionSynchronizationManager中所有ThreadLocal的变量值,避免内存泄露
 			// 3. 解绑线程和连接对象的绑定关系
 			// 4. 重置连接对象,恢复连接对象的各项默认值,调用连接对象的close()方法,将连接对象归还连接池

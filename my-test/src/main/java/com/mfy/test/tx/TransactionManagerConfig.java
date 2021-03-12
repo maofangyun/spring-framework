@@ -1,6 +1,5 @@
 package com.mfy.test.tx;
 
-import com.mchange.v2.c3p0.ComboPooledDataSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
@@ -13,7 +12,7 @@ import javax.sql.DataSource;
 public class TransactionManagerConfig {
 
 	@Autowired
-	private DynamicDataSource dataSource;
+	private DataSource dataSource;
 
 	@Bean
 	public TransactionManager getTransactionManager(){
